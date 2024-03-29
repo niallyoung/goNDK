@@ -1,0 +1,35 @@
+name: branches
+
+on:
+  push:
+    branches: "**"
+
+jobs:
+
+  lint:
+    continue-on-error: true # TODO
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.1.1
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+      - run: make lint
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.1.1
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: ./go.mod
+      - run: make test
+
+#  cover:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v4.1.1
+#      - uses: actions/setup-go@v5
+#        with:
+#          go-version-file: ./go.mod
+#      - run: make cover

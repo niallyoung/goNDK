@@ -1,5 +1,7 @@
 # gondo
 
+[![Run Tests](https://github.com/niallyoung/gondo/actions/workflows/branches.yml/badge.svg)](https://github.com/niallyoung/gondo/actions/workflows/branches.yml)
+
 gondo is to be an Oasis, for NOSTR Development, in Golang.
 
 * low-level and intermediate foundations, for rapid prototyping and building upon
@@ -10,9 +12,7 @@ gondo is to be an Oasis, for NOSTR Development, in Golang.
   * [nostr-domain](https://github.com/dextryz/nostr-domain)
 
 ## TODO
-- .meta/ cicd, Makefile, stubs etc.
-- establish top-level namespaces
-- Event{}
+- flesh out Event{}, funcs, types, interfaces, tests
 
 MIT License
 Copyright (c) 2024 Niall Young <5465765+niallyoung@users.noreply.github.com>
