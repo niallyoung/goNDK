@@ -1,6 +1,6 @@
 # gondo
 
-[![Run Tests](https://github.com/niallyoung/gondo/actions/workflows/branches.yml/badge.svg)](https://github.com/niallyoung/gondo/actions/workflows/branches.yml)
+[![Run Tests](https://github.com/niallyoung/gondo/actions/workflows/branches.yaml/badge.svg)](https://github.com/niallyoung/gondo/actions/workflows/branches.yaml)
 
 gondo is to be an Oasis, for NOSTR Development, in Golang.
 
