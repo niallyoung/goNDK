@@ -2,7 +2,7 @@ name: branches
 
 on:
   push:
-    branches-ignore: main
+    branch: main
 
 jobs:
 
