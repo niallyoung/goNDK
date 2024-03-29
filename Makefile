@@ -15,7 +15,7 @@ test:
 .PHONY: test
 
 cover:
-	@go test
+	@go test \
 		-timeout=5m \
 		-coverprofile=coverage.out \
 		-covermode=atomic \

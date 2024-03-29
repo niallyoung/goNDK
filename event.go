@@ -1,4 +1,4 @@
-package event
+package gondo
 
 type Event struct{}
 
