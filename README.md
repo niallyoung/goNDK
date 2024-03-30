@@ -1,6 +1,6 @@
-# NDK
+# goNDK
 
-[![Run Tests](https://github.com/niallyoung/ndk/actions/workflows/main.yaml/badge.svg)](https://github.com/niallyoung/ndk/actions/workflows/main.yaml)
+[![Run Tests](https://github.com/niallyoung/goNDK/actions/workflows/main.yaml/badge.svg)](https://github.com/niallyoung/goNDK/actions/workflows/main.yaml)
 
 NOSTR Development Kit, for Golang.
 

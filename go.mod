@@ -1,4 +1,4 @@
-module github.com/niallyoung/ndk
+module github.com/niallyoung/goNDK
 
 go 1.22.1
 

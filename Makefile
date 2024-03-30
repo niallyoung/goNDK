@@ -1,6 +1,6 @@
 SHELL:=/bin/bash
 
-NAME:=ndk
+NAME:=goNDK
 HASH:=$(shell git rev-parse --short HEAD)
 
 all: test cover
@@ -19,7 +19,7 @@ cover:
 		-timeout=5m \
 		-coverprofile=coverage.out \
 		-covermode=atomic \
-		-coverpkg $(go list github.com/niallyoung/ndk/...) \
+		-coverpkg $(go list github.com/niallyoung/goNDK/...) \
 		./...
 	$(./.meta/cover.sh)
 .PHONY: cover

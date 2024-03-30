@@ -1,4 +1,4 @@
-package ndk
+package goNDK
 
 import (
 	"cmp"
