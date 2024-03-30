@@ -1,4 +1,4 @@
-module github.com/niallyoung/gondo
+module github.com/niallyoung/ndk
 
 go 1.22.1
 

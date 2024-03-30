@@ -1,8 +1,8 @@
-# gondo
+# NDK
 
-[![Run Tests](https://github.com/niallyoung/gondo/actions/workflows/main.yaml/badge.svg)](https://github.com/niallyoung/gondo/actions/workflows/main.yaml)
+[![Run Tests](https://github.com/niallyoung/ndk/actions/workflows/main.yaml/badge.svg)](https://github.com/niallyoung/ndk/actions/workflows/main.yaml)
 
-gondo is to be an Oasis, for NOSTR Development, in Golang.
+NOSTR Development Kit, for Golang.
 
 * low-level and intermediate foundations, for rapid prototyping and building prod-ready solutions
 * structured Go, with coherent packages, interfaces, dependency injection, high test coverage

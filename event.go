@@ -1,4 +1,4 @@
-package gondo
+package ndk
 
 import (
 	"cmp"
