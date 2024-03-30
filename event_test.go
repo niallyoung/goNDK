@@ -10,7 +10,7 @@ import (
 
 func TestNewEvent(t *testing.T) {
 	t.Run("NewEvent() returns an Event", func(t *testing.T) {
-		e := gondo.NewEvent()
+		e := gondo.NewEvent("", 0, 1, nil, "fake-content", "fake-sig")
 		assert.NotNil(t, e)
 	})
 }
