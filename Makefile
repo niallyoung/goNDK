@@ -3,7 +3,7 @@ SHELL:=/bin/bash
 NAME:=goNDK
 HASH:=$(shell git rev-parse --short HEAD)
 
-all: test cover
+all: lint test cover
 .PHONY: all
 
 generate:

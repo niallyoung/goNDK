@@ -4,14 +4,16 @@ import (
 	"cmp"
 	"crypto/sha256"
 	"encoding/hex"
-	"errors"
 	"fmt"
+	"math"
+	"time"
 
 	"github.com/btcsuite/btcd/btcec/v2"
 	"github.com/btcsuite/btcd/btcec/v2/schnorr"
 	"github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/go-ozzo/ozzo-validation/v4/is"
 	"github.com/mailru/easyjson"
-	"github.com/nbd-wtf/go-nostr"
+	"github.com/pkg/errors"
 )
 
 // Eventer TODO what's a better name?
@@ -25,17 +27,17 @@ type Eventer interface {
 
 type Event struct {
 	//nolint:all
-	id        *string         `json:"id,omitempty"`
-	PubKey    string          `json:"pubkey,omitempty"`
-	CreatedAt nostr.Timestamp `json:"created_at,omitempty"`
-	Kind      int             `json:"kind"`
-	Tags      Tags            `json:"tags,omitempty"`
-	Content   string          `json:"content,omitempty"`
-	Sig       string          `json:"sig,omitempty"`
+	id        *string   `json:"id,omitempty"`
+	PubKey    string    `json:"pubkey,omitempty"`
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	Kind      int       `json:"kind"`
+	Tags      Tags      `json:"tags,omitempty"`
+	Content   string    `json:"content,omitempty"`
+	Sig       string    `json:"sig,omitempty"`
 }
 
-func NewEvent(pubkey string, createdAt nostr.Timestamp, kind int, tags Tags, content string, sig string) Eventer {
-	event := Event{
+func NewEvent(pubkey string, createdAt time.Time, kind int, tags Tags, content string, sig string) Eventer {
+	e := &Event{
 		PubKey:    pubkey,
 		CreatedAt: createdAt,
 		Kind:      kind,
@@ -44,51 +46,55 @@ func NewEvent(pubkey string, createdAt nostr.Timestamp, kind int, tags Tags, con
 		Sig:       sig,
 	}
 
-	_ = event.setId()
+	_ = e.setId()
 
-	return event
+	return e
 }
 
-func (e Event) ID() string {
+func (e *Event) ID() string {
 	return cmp.Or(*e.id, e.setId())
 }
 
-func (e Event) setId() string {
-	ptr := &e
-	checksum := sha256.Sum256(ptr.Serialize())
-	*e.id = hex.EncodeToString(checksum[:])
-	return *e.id
+func (e *Event) setId() string {
+	checksum := sha256.Sum256(e.Serialize())
+	id := hex.EncodeToString(checksum[:])
+	e.id = &id
+	return id
 }
 
-func (e Event) Validate() error {
-	if ok, _ := e.validateSig(); !ok {
-		return errors.New("sig no valid")
-	}
-
-	return validation.ValidateStruct(&e,
-		validation.Field(&e.id, validation.Required, validation.Length(1, 32)), // NFI yet, but // TODO consider accessor->generate->private attrib
-		validation.Field(&e.PubKey, validation.Required, validation.Length(1, 64)),
-		validation.Field(&e.CreatedAt, validation.Required),
-		validation.Field(&e.Kind, validation.Required),
+func (e *Event) Validate() error {
+	if err := validation.ValidateStruct(&e,
+		validation.Field(&e.id, validation.Required, is.Hexadecimal, validation.Length(32, 32)),     // hex sha256
+		validation.Field(&e.PubKey, validation.Required, is.Hexadecimal, validation.Length(64, 64)), // hex secp256k1
+		validation.Field(&e.CreatedAt, validation.Required, validation.Min(time.Unix(0, 0)), validation.Max(time.Unix(math.MaxInt64, 0))),
+		validation.Field(&e.Kind, validation.Required, is.Int),
 		validation.Field(&e.Tags, validation.Required),
 		validation.Field(&e.Content, validation.Required),
-		validation.Field(&e.Sig, validation.Required),
-	)
+		validation.Field(&e.Sig, validation.Required, is.Hexadecimal),
+	); err != nil {
+		return err
+	}
+
+	if ok, err := e.validateSig(); !ok {
+		return errors.Wrap(err, "sig not valid")
+	}
+
+	return nil
 }
 
-func (e Event) validateSig() (bool, error) {
+func (e *Event) validateSig() (bool, error) {
 	return e.CheckSignature()
 }
 
 // Stringer interface, just returns the raw JSON as a string.
-func (e Event) String() string {
+func (e *Event) String() string {
 	j, _ := easyjson.Marshal(e)
 	return string(j)
 }
 
 // Serialize outputs a byte array that can be hashed/signed to identify/authenticate.
 // JSON encoding as defined in RFC4627.
-func (e Event) Serialize() []byte {
+func (e *Event) Serialize() []byte {
 	// the serialization process is just putting everything into a JSON array
 	// so the order is kept. See NIP-01
 	dst := make([]byte, 0)
@@ -99,7 +105,7 @@ func (e Event) Serialize() []byte {
 		fmt.Sprintf(
 			"[0,\"%s\",%d,%d,",
 			e.PubKey,
-			e.CreatedAt,
+			e.CreatedAt.Unix(),
 			e.Kind,
 		))...)
 
@@ -117,7 +123,7 @@ func (e Event) Serialize() []byte {
 // CheckSignature checks if the signature is valid for the id
 // (which is a hash of the serialized event content).
 // returns an error if the signature itself is invalid.
-func (e Event) CheckSignature() (bool, error) {
+func (e *Event) CheckSignature() (bool, error) {
 	// read and check pubkey
 	pk, err := hex.DecodeString(e.PubKey)
 	if err != nil {
@@ -145,7 +151,7 @@ func (e Event) CheckSignature() (bool, error) {
 }
 
 // Sign signs an event with a given privateKey.
-func (e Event) Sign(privateKey string, signOpts ...schnorr.SignOption) error {
+func (e *Event) Sign(privateKey string, signOpts ...schnorr.SignOption) error {
 	s, err := hex.DecodeString(privateKey)
 	if err != nil {
 		return fmt.Errorf("sign called with invalid private key '%s': %w", privateKey, err)
@@ -212,7 +218,6 @@ func escapeString(dst []byte, s string) []byte {
 }
 
 type Tag []string
-type Tags []Tag
 
 // Marshal Tag. Used for Serialization so string escaping should be as in RFC8259.
 func (tag Tag) marshalTo(dst []byte) []byte {
@@ -226,6 +231,8 @@ func (tag Tag) marshalTo(dst []byte) []byte {
 	dst = append(dst, ']')
 	return dst
 }
+
+type Tags []Tag
 
 // MarshalTo appends the JSON encoded byte of Tags as [][]string to dst.
 // String escaping is as described in RFC8259.
