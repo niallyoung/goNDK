@@ -6,6 +6,10 @@ HASH:=$(shell git rev-parse --short HEAD)
 all: test cover
 .PHONY: all
 
+generate:
+	go run github.com/mailru/easyjson/easyjson -all event.go
+.PHONY: generate
+
 lint:
 	go run github.com/golangci/golangci-lint/cmd/golangci-lint run --timeout=5m ./... | tee lint.out
 .PHONY: lint
