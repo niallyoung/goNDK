@@ -19,13 +19,8 @@ test:
 .PHONY: test
 
 cover:
-	@go test \
-		-timeout=5m \
-		-coverprofile=coverage.out \
-		-covermode=atomic \
-		-coverpkg $(go list github.com/niallyoung/goNDK/...) \
-		./...
-	$(./.meta/cover.sh)
+	go test -timeout=5m -coverprofile=coverage.out -covermode=atomic -coverpkg github.com/niallyoung/goNDK/... ./...
+	./.meta/cover.sh
 .PHONY: cover
 
 docker.build:
