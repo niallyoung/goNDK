@@ -26,8 +26,7 @@ type Eventer interface {
 }
 
 type Event struct {
-	//nolint:all
-	id        *string   `json:"id,omitempty"`
+	id        *string   `json:"id,omitempty"` // TODO remove json and custom marshal/unmarshal?  no effect: //nolint:all
 	PubKey    string    `json:"pubkey,omitempty"`
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	Kind      int       `json:"kind"`
@@ -214,36 +213,5 @@ func escapeString(dst []byte, s string) []byte {
 		}
 	}
 	dst = append(dst, '"')
-	return dst
-}
-
-type Tag []string
-
-// Marshal Tag. Used for Serialization so string escaping should be as in RFC8259.
-func (tag Tag) marshalTo(dst []byte) []byte {
-	dst = append(dst, '[')
-	for i, s := range tag {
-		if i > 0 {
-			dst = append(dst, ',')
-		}
-		dst = escapeString(dst, s)
-	}
-	dst = append(dst, ']')
-	return dst
-}
-
-type Tags []Tag
-
-// MarshalTo appends the JSON encoded byte of Tags as [][]string to dst.
-// String escaping is as described in RFC8259.
-func (tags Tags) marshalTo(dst []byte) []byte {
-	dst = append(dst, '[')
-	for i, tag := range tags {
-		if i > 0 {
-			dst = append(dst, ',')
-		}
-		dst = tag.marshalTo(dst)
-	}
-	dst = append(dst, ']')
 	return dst
 }
