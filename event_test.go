@@ -1,4 +1,4 @@
-package goNDK
+package goNDK_test
 
 import (
 	"testing"
