@@ -2,6 +2,4 @@ package ignore_test
 
 import "testing"
 
-func TestStub(t *testing.T) {
-	return
-}
+func TestStub(t *testing.T) {}

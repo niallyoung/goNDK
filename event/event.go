@@ -26,7 +26,8 @@ type Eventer interface {
 }
 
 type Event struct {
-	id        *string   `json:"id,omitempty"` // TODO remove json and custom marshal/unmarshal?  no effect: //nolint:all
+	//nolint:all
+	id        *string   `json:"id,omitempty"`
 	PubKey    string    `json:"pubkey,omitempty"`
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	Kind      int       `json:"kind"`
