@@ -7,7 +7,7 @@ all: lint test cover
 .PHONY: all
 
 generate:
-	go run github.com/mailru/easyjson/easyjson -all event.go
+	go run github.com/mailru/easyjson/easyjson -all event/event.go
 .PHONY: generate
 
 lint:

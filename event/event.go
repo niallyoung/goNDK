@@ -1,4 +1,4 @@
-package goNDK
+package event
 
 import (
 	"cmp"

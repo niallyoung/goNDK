@@ -1,4 +1,4 @@
-package goNDK_test
+package event_test
 
 import (
 	"testing"
@@ -6,12 +6,12 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/niallyoung/goNDK"
+	"github.com/niallyoung/goNDK/event"
 )
 
 func TestNewEvent(t *testing.T) {
 	t.Run("NewEvent() returns an Event", func(t *testing.T) {
-		e := goNDK.NewEvent("fake-pubkey", time.Unix(0, 0), 1, goNDK.Tags{}, "fake-content", "fake-sig")
+		e := event.NewEvent("fake-pubkey", time.Unix(0, 0), 1, event.Tags{}, "fake-content", "fake-sig")
 		assert.NotNil(t, e)
 	})
 }
