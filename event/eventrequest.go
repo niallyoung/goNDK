@@ -14,6 +14,7 @@ type EventRequest struct {
 	Sig       string    `json:"sig"`
 }
 
+// TODO I'm still not sold on this, prefer time.Time and serialize, will circle back
 type Timestamp int64
 
 func (t Timestamp) Time() time.Time {
