@@ -74,6 +74,11 @@ func (e Event) Validate() error {
 		return err
 	}
 
+	// TODO think through the use-cases here, do we want a generic flexible Event for pre-signed, pre-id ...?
+	// TODO or at this point enforce / construct only fully-formed and signed Events ...?
+	//
+	// TODO consider use-case specific validators, upon basic value Validate() minimum?: ValidateUnsigned()?
+
 	if ok, err := e.ValidateSignature(); !ok {
 		return errors.Wrap(err, "signature not valid")
 	}
