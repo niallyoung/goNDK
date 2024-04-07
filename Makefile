@@ -19,7 +19,8 @@ test:
 .PHONY: test
 
 cover:
-	go test -timeout=5m -coverprofile=coverage.out -covermode=atomic -coverpkg github.com/niallyoung/goNDK/... ./...
+	go test ./... -timeout=5m -coverprofile=coverage.out -covermode=atomic ./...
+	cat coverage.out | grep -v "github.com/niallyoung/goNDK/event/event_easyjson.go" >coverage.out.final
 	./.meta/cover.sh
 .PHONY: cover
 

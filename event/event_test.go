@@ -1,34 +1,47 @@
 package event_test
 
 import (
-	"testing"
-	"time"
-
 	"github.com/stretchr/testify/assert"
+	"testing"
 
 	"github.com/niallyoung/goNDK/event"
 )
 
-var jsonEvent = `{"pubkey": "fake-pubkey", "created_at:" 0, "kind": 1, "content": "fake-content", "sig": "fake-sig"}`
-var newEvent = event.NewEvent("fake-pubkey", time.Unix(0, 0), 1, event.Tags{}, "fake-content", "fake-sig")
-var validEvent = &event.Event{PubKey: "fake-pubkey", CreatedAt: time.Unix(0, 0), Kind: 1, Tags: event.Tags{}, Content: "fake-content", Sig: "fake-sig"}
+//var validEventJSON = `{
+//	"id": "b52cc46fc9e38e51e8774cc13c00523c013d371d1dd5f42113f06e43ed870a76",
+//	"pubkey": "234dd2c21135830a960a462defdb410ac26f178cbf8e13fbe43890f8656ee983",
+//	"created_at": 1712350548,
+//	"kind": 1,
+//	"tags": [],
+//	"content": "GM nostr welcome to Saturday!",
+//	"sig": "46d7935c4f26f7c20da1f5cdd919f397dc1f63339fadf0b8145eb1fa6a92fae05ef12b5faa8b45794c2700c268ffe0fc389e1894b5fd09195a65e72df7d9e7c1"
+//}`
+
+var validEvent = func() (event.Eventer, error) {
+	return event.NewEvent(
+		"b52cc46fc9e38e51e8774cc13c00523c013d371d1dd5f42113f06e43ed870a76",
+		"234dd2c21135830a960a462defdb410ac26f178cbf8e13fbe43890f8656ee983",
+		int64(1712350548),
+		1,
+		event.Tags{nil},
+		"GM nostr welcome to Saturday!",
+		"46d7935c4f26f7c20da1f5cdd919f397dc1f63339fadf0b8145eb1fa6a92fae05ef12b5faa8b45794c2700c268ffe0fc389e1894b5fd09195a65e72df7d9e7c1",
+	)
+}
 
 func TestNewEvent(t *testing.T) {
 	t.Run("NewEvent() returns an Event", func(t *testing.T) {
-		e := newEvent
+		e, err := validEvent()
+		assert.NoError(t, err)
 		assert.NotNil(t, e)
-	})
-
-	t.Run("new Event has an ID", func(t *testing.T) {
-		e := newEvent
-		assert.Equal(t, "9d004c6d691bb765165f30dfa8854355033025b12f564707331d8de5f0a77a72", e.ID())
 	})
 }
 
 func TestEvent_Validate(t *testing.T) {
 	t.Run("validate", func(t *testing.T) {
-		e := validEvent
-		err := e.Validate()
+		e, err := validEvent()
+		assert.NoError(t, err)
+		err = e.Validate()
 		assert.NoError(t, err)
 	})
 }

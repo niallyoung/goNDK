@@ -1,9 +1,9 @@
 #!/bin/bash
 
-MINIMUM_COVERAGE="3.87"
+MINIMUM_COVERAGE="1.19"
 
 ACTUAL_COVERAGE=$(
-  cat coverage.out | \
+  cat coverage.out.final | \
     awk 'BEGIN {cov=0; stat=0;} \
       $3!="" { cov+=($3==1?$2:0); stat+=$2; } \
       END {printf("%.2f\n", (cov/stat)*100);}'

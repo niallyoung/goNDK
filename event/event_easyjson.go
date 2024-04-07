@@ -106,30 +106,19 @@ func easyjsonF642ad3eEncodeGithubComNiallyoungGoNDKEvent(out *jwriter.Writer, in
 	out.RawByte('{')
 	first := true
 	_ = first
-	if in.PubKey != "" {
+	{
 		const prefix string = ",\"pubkey\":"
-		first = false
 		out.RawString(prefix[1:])
 		out.String(string(in.PubKey))
 	}
-	if true {
+	{
 		const prefix string = ",\"created_at\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.Raw((in.CreatedAt).MarshalJSON())
 	}
 	{
 		const prefix string = ",\"kind\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.Int(int(in.Kind))
 	}
 	if len(in.Tags) != 0 {
@@ -157,12 +146,12 @@ func easyjsonF642ad3eEncodeGithubComNiallyoungGoNDKEvent(out *jwriter.Writer, in
 			out.RawByte(']')
 		}
 	}
-	if in.Content != "" {
+	{
 		const prefix string = ",\"content\":"
 		out.RawString(prefix)
 		out.String(string(in.Content))
 	}
-	if in.Sig != "" {
+	{
 		const prefix string = ",\"sig\":"
 		out.RawString(prefix)
 		out.String(string(in.Sig))

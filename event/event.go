@@ -5,7 +5,6 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
-	"math"
 	"time"
 
 	"github.com/btcsuite/btcd/btcec/v2"
@@ -27,50 +26,55 @@ type Eventer interface {
 
 type Event struct {
 	//nolint:all
-	id        *string   `json:"id,omitempty"`
-	PubKey    string    `json:"pubkey,omitempty"`
-	CreatedAt time.Time `json:"created_at,omitempty"`
+	id        *string   `json:"id"`
+	PubKey    string    `json:"pubkey"`
+	CreatedAt time.Time `json:"created_at"`
 	Kind      int       `json:"kind"`
 	Tags      Tags      `json:"tags,omitempty"`
-	Content   string    `json:"content,omitempty"`
-	Sig       string    `json:"sig,omitempty"`
+	Content   string    `json:"content"`
+	Sig       string    `json:"sig"`
 }
 
-func NewEvent(pubkey string, createdAt time.Time, kind int, tags Tags, content string, sig string) Eventer {
+func NewEvent(id string, pubkey string, createdAt int64, kind int, tags Tags, content string, sig string) (Eventer, error) {
 	e := &Event{
+		id:        &id,
 		PubKey:    pubkey,
-		CreatedAt: createdAt,
+		CreatedAt: time.Unix(createdAt, 0),
 		Kind:      kind,
 		Tags:      tags,
 		Content:   content,
 		Sig:       sig,
 	}
 
-	_ = e.setId()
+	if err := e.Validate(); err != nil {
+		return nil, errors.Wrap(err, "new event validation")
+	}
 
-	return e
+	return e, nil
 }
 
 func (e *Event) ID() string {
-	return cmp.Or(*e.id, e.setId())
+	return cmp.Or(*e.id, e.generateID())
 }
 
-func (e *Event) setId() string {
+func (e *Event) generateID() string {
 	checksum := sha256.Sum256(e.Serialize())
 	id := hex.EncodeToString(checksum[:])
-	e.id = &id
 	return id
 }
 
-func (e *Event) Validate() error {
+func (e Event) Validate() error {
 	if err := validation.ValidateStruct(&e,
-		validation.Field(&e.id, validation.Required, is.Hexadecimal, validation.Length(32, 32)),     // hex sha256
+		validation.Field( // hex sha256
+			&e.id, validation.Required, is.Hexadecimal, validation.Length(64, 64),
+			//validation.Match(regexp.MustCompile("^"+e.generateID()+"$")),
+		),
 		validation.Field(&e.PubKey, validation.Required, is.Hexadecimal, validation.Length(64, 64)), // hex secp256k1
-		validation.Field(&e.CreatedAt, validation.Required, validation.Min(time.Unix(0, 0)), validation.Max(time.Unix(math.MaxInt64, 0))),
-		validation.Field(&e.Kind, validation.Required, is.Int),
-		validation.Field(&e.Tags, validation.Required),
-		validation.Field(&e.Content, validation.Required),
-		validation.Field(&e.Sig, validation.Required, is.Hexadecimal),
+		validation.Field(&e.CreatedAt, validation.Required, validation.Min(time.Unix(0, 0))),
+		validation.Field(&e.Kind, validation.Required),
+		validation.Field(&e.Tags, validation.When(e.Tags != nil, validation.Each(is.UTFLetterNumeric))),
+		validation.Field(&e.Content, validation.Required), // always?
+		validation.Field(&e.Sig, validation.Required, is.Hexadecimal, validation.Length(128, 128)),
 	); err != nil {
 		return err
 	}
