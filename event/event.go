@@ -4,7 +4,6 @@ import (
 	"cmp"
 	"crypto/sha256"
 	"encoding/hex"
-	"time"
 
 	"github.com/btcsuite/btcd/btcec/v2/schnorr"
 	"github.com/go-ozzo/ozzo-validation/v4"
@@ -26,7 +25,7 @@ type Event struct {
 	//nolint:all
 	id        *string   `json:"id"`
 	PubKey    string    `json:"pubkey"`
-	CreatedAt time.Time `json:"created_at"`
+	CreatedAt Timestamp `json:"created_at"`
 	Kind      int       `json:"kind"`
 	Tags      Tags      `json:"tags,omitempty"`
 	Content   string    `json:"content"`
@@ -37,7 +36,7 @@ func NewEvent(id *string, pubkey string, createdAt int64, kind int, tags Tags, c
 	e := &Event{
 		id:        id,
 		PubKey:    pubkey,
-		CreatedAt: time.Unix(createdAt, 0),
+		CreatedAt: Timestamp(createdAt),
 		Kind:      kind,
 		Tags:      tags,
 		Content:   content,
@@ -65,7 +64,7 @@ func (e Event) Validate() error {
 	if err := validation.ValidateStruct(&e,
 		validation.Field(&e.id, validation.Required, is.Hexadecimal, validation.Length(64, 64)),     // hex, sha256 event serialization
 		validation.Field(&e.PubKey, validation.Required, is.Hexadecimal, validation.Length(64, 64)), // hex, secp256k1 schnorr public key
-		validation.Field(&e.CreatedAt, validation.Required, validation.Min(time.Unix(0, 0))),
+		validation.Field(&e.CreatedAt, validation.Required, validation.Min(0)),
 		validation.Field(&e.Kind, validation.Required),                                                  // only ever positive: 0..N?
 		validation.Field(&e.Tags, validation.When(e.Tags != nil, validation.Each(is.UTFLetterNumeric))), // symbols?
 		validation.Field(&e.Content, validation.Required),                                               // always?

@@ -39,9 +39,7 @@ func easyjsonF642ad3eDecodeGithubComNiallyoungGoNDKEvent(in *jlexer.Lexer, out *
 		case "pubkey":
 			out.PubKey = string(in.String())
 		case "created_at":
-			if data := in.Raw(); in.Ok() {
-				in.AddError((out.CreatedAt).UnmarshalJSON(data))
-			}
+			out.CreatedAt = Timestamp(in.Int64())
 		case "kind":
 			out.Kind = int(in.Int())
 		case "tags":
@@ -114,7 +112,7 @@ func easyjsonF642ad3eEncodeGithubComNiallyoungGoNDKEvent(out *jwriter.Writer, in
 	{
 		const prefix string = ",\"created_at\":"
 		out.RawString(prefix)
-		out.Raw((in.CreatedAt).MarshalJSON())
+		out.Int64(int64(in.CreatedAt))
 	}
 	{
 		const prefix string = ",\"kind\":"
