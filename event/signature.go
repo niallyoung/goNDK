@@ -10,7 +10,7 @@ import (
 )
 
 // Sign signs an event with a given privateKey.
-func (e Event) Sign(privateKey string, signOpts ...schnorr.SignOption) error {
+func (e *Event) Sign(privateKey string, signOpts ...schnorr.SignOption) error {
 	s, err := hex.DecodeString(privateKey)
 	if err != nil {
 		return fmt.Errorf("sign called with invalid private key '%s': %w", privateKey, err)
