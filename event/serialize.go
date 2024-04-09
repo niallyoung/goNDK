@@ -49,7 +49,7 @@ func escapeString(dst []byte, s string) []byte {
 		case c >= 0x20:
 			// default, rest below are control chars
 			dst = append(dst, c)
-		// TODO confirm if all lines below have zero coverage?!?
+		// TODO debug and confirm what's happening here, IDE reports zero coverage for all remaining cases?!?
 		case c == 0x08:
 			dst = append(dst, []byte{'\\', 'b'}...)
 		case c < 0x09:
