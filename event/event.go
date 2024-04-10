@@ -14,10 +14,12 @@ import (
 // Eventer TODO what's a better name?
 type Eventer interface {
 	ID() string
-	String() string
 	Serialize() []byte
 	Sign(privateKey string, signOpts ...schnorr.SignOption) error
+	String() string
 	Validate() error
+	ValidateID() error
+	ValidateSignature() (bool, error)
 }
 
 // Event is a fully-formed NOSTR Event, signed and ready for publishing
@@ -32,8 +34,8 @@ type Event struct {
 	Sig       string    `json:"sig"`
 }
 
-func NewEvent(id *string, pubkey string, createdAt int64, kind int, tags Tags, content string, sig string) (Eventer, error) {
-	e := &Event{
+func NewEvent(id *string, pubkey string, createdAt int64, kind int, tags Tags, content string, sig string) Eventer {
+	return &Event{
 		id:        id,
 		PubKey:    pubkey,
 		CreatedAt: Timestamp(createdAt),
@@ -42,8 +44,6 @@ func NewEvent(id *string, pubkey string, createdAt int64, kind int, tags Tags, c
 		Content:   content,
 		Sig:       sig,
 	}
-
-	return e, nil
 }
 
 func (e Event) ID() string {

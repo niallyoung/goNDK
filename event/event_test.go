@@ -10,7 +10,7 @@ import (
 )
 
 // TODO test/fixtures/* ?
-var validEvent = func() (event.Eventer, error) {
+var validEvent = func() event.Eventer {
 	return event.NewEvent(
 		ptr.String("b52cc46fc9e38e51e8774cc13c00523c013d371d1dd5f42113f06e43ed870a76"),
 		"234dd2c21135830a960a462defdb410ac26f178cbf8e13fbe43890f8656ee983",
@@ -36,17 +36,15 @@ const validEventString = `{"pubkey":"234dd2c21135830a960a462defdb410ac26f178cbf8
 
 func TestNewEvent(t *testing.T) {
 	t.Run("NewEvent() returns an Event", func(t *testing.T) {
-		e, err := validEvent()
-		assert.NoError(t, err)
+		e := validEvent()
 		assert.NotNil(t, e)
 	})
 }
 
 func TestEvent_Validate(t *testing.T) {
 	t.Run("validate", func(t *testing.T) {
-		e, err := validEvent()
-		assert.NoError(t, err)
-		err = e.Validate()
+		e := validEvent()
+		err := e.Validate()
 		assert.NoError(t, err)
 	})
 }
