@@ -7,7 +7,7 @@ import (
 )
 
 func TestEvent_Serialize(t *testing.T) {
-	t.Run("NewEvent() returns an Event", func(t *testing.T) {
+	t.Run("Serialize() returns expected JSON", func(t *testing.T) {
 		e := validEvent()
 		bytes := e.Serialize()
 		assert.Equal(t, validEventSerialize, string(bytes))

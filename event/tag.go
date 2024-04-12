@@ -9,7 +9,7 @@ func (tag Tag) marshalTo(dst []byte) []byte {
 		if i > 0 {
 			dst = append(dst, ',')
 		}
-		dst = escapeString(dst, s)
+		dst = EscapeString(dst, s)
 	}
 	dst = append(dst, ']')
 	return dst

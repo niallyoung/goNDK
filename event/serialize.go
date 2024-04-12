@@ -27,7 +27,7 @@ func (e Event) Serialize() []byte {
 	dst = append(dst, ',')
 
 	// content needs to be escaped in general as it is user generated.
-	dst = escapeString(dst, e.Content)
+	dst = EscapeString(dst, e.Content)
 	dst = append(dst, ']')
 
 	return dst
@@ -35,7 +35,7 @@ func (e Event) Serialize() []byte {
 
 // Escaping strings for JSON encoding according to RFC8259.
 // Also encloses result in quotation marks "".
-func escapeString(dst []byte, s string) []byte {
+func EscapeString(dst []byte, s string) []byte {
 	dst = append(dst, '"')
 	for i := 0; i < len(s); i++ {
 		c := s[i]
