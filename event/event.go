@@ -34,7 +34,7 @@ type Event struct {
 	Sig       string    `json:"sig"`
 }
 
-func NewEvent(id *string, pubkey string, createdAt int64, kind int, tags Tags, content string, sig string) Eventer {
+func NewEvent(id *string, createdAt int64, kind int, content string, pubkey string, sig string, tags Tags) *Event {
 	return &Event{
 		id:        id,
 		PubKey:    pubkey,
