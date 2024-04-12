@@ -1,7 +1,9 @@
 package event_test
 
 import (
+	"encoding/json"
 	"fmt"
+	"github.com/niallyoung/goNDK/event"
 	"math/rand"
 	"testing"
 	"time"
@@ -33,12 +35,13 @@ func TestEvent_Sign(t *testing.T) {
 }
 
 func TestEvent_ValidateSignature(t *testing.T) {
-	//t.Run("sign with a valid privatekey", func(t *testing.T) {
-	//	e := validEvent()
-	//	ok, err := e.ValidateSignature()
-	//	assert.True(t, ok)
-	//	assert.NoError(t, err)
-	//})
+	t.Run("sign with a valid privatekey", func(t *testing.T) {
+		var e event.Event
+		err := json.Unmarshal([]byte(validEventJSON), &e)
+		ok, err := e.ValidateSignature()
+		assert.True(t, ok)
+		assert.NoError(t, err)
+	})
 
 	t.Run("sign an invalid pubkey, with a valid privatekey", func(t *testing.T) {
 		e := validEvent()
