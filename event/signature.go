@@ -22,7 +22,7 @@ func (e *Event) Sign(privateKey string, signOpts ...schnorr.SignOption) error {
 
 	sk, pk := btcec.PrivKeyFromBytes(s)
 	pkBytes := pk.SerializeCompressed()
-	e.PubKey = hex.EncodeToString(pkBytes[1:])
+	*e.PubKey = hex.EncodeToString(pkBytes[1:])
 
 	h := sha256.Sum256(e.Serialize())
 	sig, err := schnorr.Sign(sk, h[:], signOpts...)
@@ -30,8 +30,8 @@ func (e *Event) Sign(privateKey string, signOpts ...schnorr.SignOption) error {
 		return err
 	}
 
-	e.ID = hex.EncodeToString(h[:])
-	e.Sig = hex.EncodeToString(sig.Serialize())
+	*e.ID = hex.EncodeToString(h[:])
+	*e.Sig = hex.EncodeToString(sig.Serialize())
 
 	return nil
 }
@@ -39,20 +39,20 @@ func (e *Event) Sign(privateKey string, signOpts ...schnorr.SignOption) error {
 // ValidateSignature checks if the signature is valid for the id
 func (e Event) ValidateSignature() (bool, error) {
 	// read and check pubkey
-	pk, err := hex.DecodeString(e.PubKey)
+	pk, err := hex.DecodeString(*e.PubKey)
 	if err != nil {
-		return false, fmt.Errorf("event pubkey '%s' is invalid hex: %w", e.PubKey, err)
+		return false, fmt.Errorf("event pubkey '%s' is invalid hex: %w", *e.PubKey, err)
 	}
 
 	pubkey, err := schnorr.ParsePubKey(pk)
 	if err != nil {
-		return false, fmt.Errorf("event has invalid pubkey '%s': %w", e.PubKey, err)
+		return false, fmt.Errorf("event has invalid pubkey '%s': %w", *e.PubKey, err)
 	}
 
 	// read signature
-	s, err := hex.DecodeString(e.Sig)
+	s, err := hex.DecodeString(*e.Sig)
 	if err != nil {
-		return false, fmt.Errorf("signature '%s' is invalid hex: %w", e.Sig, err)
+		return false, fmt.Errorf("signature '%s' is invalid hex: %w", *e.Sig, err)
 	}
 	sig, err := schnorr.ParseSignature(s)
 	if err != nil {

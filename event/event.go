@@ -1,8 +1,7 @@
 package event
 
 import (
-	"crypto/sha256"
-	"encoding/hex"
+	"cmp"
 
 	"github.com/btcsuite/btcd/btcec/v2/schnorr"
 	"github.com/go-ozzo/ozzo-validation/v4"
@@ -20,75 +19,54 @@ type Eventer interface {
 	ValidateSignature() (bool, error)
 }
 
-// Event is a fully-formed NOSTR Event, signed* and ready for publishing
 type Event struct {
-	ID        string    `json:"id"`
-	PubKey    string    `json:"pubkey"`
-	CreatedAt Timestamp `json:"created_at"`
 	Kind      int       `json:"kind"`
-	Tags      Tags      `json:"tags,omitempty"`
 	Content   string    `json:"content"`
-	Sig       string    `json:"sig"`
+	Tags      Tags      `json:"tags"`
+	CreatedAt Timestamp `json:"created_at"`
+	ID        *string   `json:"id"`     // set by Sign()
+	PubKey    *string   `json:"pubkey"` // set by Sign()
+	Sig       *string   `json:"sig"`    // set by Sign()
 }
 
-func NewEvent(id string, createdAt int64, kind int, content string, pubkey string, sig string, tags Tags) *Event {
+func NewEvent(
+	kind int, content string, tags Tags,
+	createdAt *int64, id *string, pubkey *string, sig *string,
+) *Event {
 	return &Event{
+		Kind:      kind,
+		Content:   content,
+		Tags:      tags,
+		CreatedAt: cmp.Or(Timestamp(*createdAt), Now()),
 		ID:        id,
 		PubKey:    pubkey,
-		CreatedAt: Timestamp(createdAt),
-		Kind:      kind,
-		Tags:      tags,
-		Content:   content,
 		Sig:       sig,
 	}
 }
 
-func (e Event) setID() string {
-	e.ID = generateID(e)
-	return e.ID
-}
-
-func generateID(e Event) string {
-	checksum := sha256.Sum256(e.Serialize())
-	return hex.EncodeToString(checksum[:])
-}
-
 func (e Event) Validate() error {
 	if err := validation.ValidateStruct(&e,
-		validation.Field(&e.ID, validation.Required, is.Hexadecimal, validation.Length(64, 64)),     // hex, sha256 event serialization
-		validation.Field(&e.PubKey, validation.Required, is.Hexadecimal, validation.Length(64, 64)), // hex, secp256k1 schnorr public key
-		validation.Field(&e.CreatedAt, validation.Required, validation.Min(0)),
-		validation.Field(&e.Kind, validation.Required),                                                  // only ever positive: 0..N?
-		validation.Field(&e.Tags, validation.When(e.Tags != nil, validation.Each(is.UTFLetterNumeric))), // symbols?
-		validation.Field(&e.Content, validation.Required),                                               // always?
-		validation.Field(&e.Sig, validation.Required, is.Hexadecimal, validation.Length(128, 128)),      // hex, pubkey signed serialization
+		validation.Field(&e.Kind, validation.Required),
+		validation.Field(&e.Content, validation.Required),
+		validation.Field(&e.Tags,
+			validation.When(e.Tags != nil, validation.Each(is.UTFLetterNumeric))),
+		validation.Field(&e.CreatedAt, validation.Required, validation.Min(0)), // time.Time.Unix()
+		validation.Field(&e.ID, // hex, sha256(event.Serialize())
+			validation.When(e.ID != nil, is.Hexadecimal, validation.Length(64, 64)),
+		),
+		validation.Field(&e.PubKey, // hex, secp256k1 schnorr public key derived from Sign(privatekey, ...)
+			validation.When(e.PubKey != nil, is.Hexadecimal, validation.Length(64, 64)),
+		),
+		validation.Field(
+			&e.Sig, // hex, pubkey signed serialization
+			validation.When(e.Sig != nil, is.Hexadecimal, validation.Length(128, 128)),
+		),
 	); err != nil {
 		return err
 	}
 
-	// TODO think through the use-cases here, do we want a generic flexible Event for pre-signed, pre-id ...?
-	// TODO or at this point enforce / construct only fully-formed and signed Events ...?
-	//
-	// TODO consider use-case specific validators, upon basic value Validate() minimum?: ValidateUnsigned()?
-
 	if ok, err := e.ValidateSignature(); !ok {
 		return errors.Wrap(err, "signature not valid")
-	}
-
-	if err := e.ValidateID(); err != nil {
-		return errors.Wrap(err, "id not valid")
-	}
-
-	return nil
-}
-
-func (e Event) ValidateID() error {
-	if e.ID == "" {
-		return errors.New("ID is empty")
-	}
-
-	if e.ID != generateID(e) {
-		return errors.New("ID is invalid")
 	}
 
 	return nil

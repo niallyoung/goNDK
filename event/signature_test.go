@@ -20,18 +20,21 @@ func TestEvent_Sign(t *testing.T) {
 		e := validEvent()
 		err := e.Sign("invalid-private-key")
 		assert.Error(t, err)
+		// TODO confirm no fields changed
 	})
 
 	t.Run("sign valid Event with a valid privatekey", func(t *testing.T) {
 		e := validEvent()
 		err := e.Sign(randomPrivateKey)
 		assert.NoError(t, err)
+		// TODO confirm fields changed
 	})
 
 	t.Run("sign valid Event with no tags, with a valid privatekey", func(t *testing.T) {
 		e := validEventNoTags()
 		err := e.Sign(randomPrivateKey)
 		assert.NoError(t, err)
+		// TODO confirm Tags initialised?
 	})
 }
 
@@ -45,7 +48,7 @@ func TestEvent_ValidateSignature_JSON_Unmarshal(t *testing.T) {
 	})
 }
 
-func TestEvent_ValidateSignature(t *testing.T) {
+func TestEvent_ValidateSignature_NewEvent(t *testing.T) {
 	t.Run("sign NewEvent() with a valid privatekey", func(t *testing.T) {
 		e := validEvent()
 		ok, err := e.ValidateSignature()
@@ -55,7 +58,7 @@ func TestEvent_ValidateSignature(t *testing.T) {
 
 	t.Run("sign an invalid pubkey, with a valid privatekey", func(t *testing.T) {
 		e := validEvent()
-		e.PubKey = "invalid"
+		*e.PubKey = "invalid"
 		ok, err := e.ValidateSignature()
 		assert.False(t, ok)
 		assert.Error(t, err)
@@ -63,7 +66,7 @@ func TestEvent_ValidateSignature(t *testing.T) {
 
 	t.Run("sign an invalid pubkey, with a valid privatekey", func(t *testing.T) {
 		e := validEvent()
-		e.PubKey = "invalid"
+		*e.PubKey = "invalid"
 		ok, err := e.ValidateSignature()
 		assert.False(t, ok)
 		assert.Error(t, err)

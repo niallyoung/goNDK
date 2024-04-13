@@ -17,7 +17,7 @@ func (e Event) Serialize() []byte {
 	dst = append(dst, []byte(
 		fmt.Sprintf(
 			"[0,\"%s\",%d,%d,",
-			e.PubKey,
+			*e.PubKey,
 			e.CreatedAt,
 			e.Kind,
 		))...)

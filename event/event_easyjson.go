@@ -36,12 +36,10 @@ func easyjsonF642ad3eDecodeGithubComNiallyoungGoNDKEvent(in *jlexer.Lexer, out *
 			continue
 		}
 		switch key {
-		case "pubkey":
-			out.PubKey = string(in.String())
-		case "created_at":
-			out.CreatedAt = Timestamp(in.Int64())
 		case "kind":
 			out.Kind = int(in.Int())
+		case "content":
+			out.Content = string(in.String())
 		case "tags":
 			if in.IsNull() {
 				in.Skip()
@@ -86,10 +84,38 @@ func easyjsonF642ad3eDecodeGithubComNiallyoungGoNDKEvent(in *jlexer.Lexer, out *
 				}
 				in.Delim(']')
 			}
-		case "content":
-			out.Content = string(in.String())
+		case "created_at":
+			out.CreatedAt = Timestamp(in.Int64())
+		case "id":
+			if in.IsNull() {
+				in.Skip()
+				out.ID = nil
+			} else {
+				if out.ID == nil {
+					out.ID = new(string)
+				}
+				*out.ID = string(in.String())
+			}
+		case "pubkey":
+			if in.IsNull() {
+				in.Skip()
+				out.PubKey = nil
+			} else {
+				if out.PubKey == nil {
+					out.PubKey = new(string)
+				}
+				*out.PubKey = string(in.String())
+			}
 		case "sig":
-			out.Sig = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+				out.Sig = nil
+			} else {
+				if out.Sig == nil {
+					out.Sig = new(string)
+				}
+				*out.Sig = string(in.String())
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -105,24 +131,21 @@ func easyjsonF642ad3eEncodeGithubComNiallyoungGoNDKEvent(out *jwriter.Writer, in
 	first := true
 	_ = first
 	{
-		const prefix string = ",\"pubkey\":"
-		out.RawString(prefix[1:])
-		out.String(string(in.PubKey))
-	}
-	{
-		const prefix string = ",\"created_at\":"
-		out.RawString(prefix)
-		out.Int64(int64(in.CreatedAt))
-	}
-	{
 		const prefix string = ",\"kind\":"
-		out.RawString(prefix)
+		out.RawString(prefix[1:])
 		out.Int(int(in.Kind))
 	}
-	if len(in.Tags) != 0 {
+	{
+		const prefix string = ",\"content\":"
+		out.RawString(prefix)
+		out.String(string(in.Content))
+	}
+	{
 		const prefix string = ",\"tags\":"
 		out.RawString(prefix)
-		{
+		if in.Tags == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+			out.RawString("null")
+		} else {
 			out.RawByte('[')
 			for v3, v4 := range in.Tags {
 				if v3 > 0 {
@@ -145,14 +168,36 @@ func easyjsonF642ad3eEncodeGithubComNiallyoungGoNDKEvent(out *jwriter.Writer, in
 		}
 	}
 	{
-		const prefix string = ",\"content\":"
+		const prefix string = ",\"created_at\":"
 		out.RawString(prefix)
-		out.String(string(in.Content))
+		out.Int64(int64(in.CreatedAt))
+	}
+	{
+		const prefix string = ",\"id\":"
+		out.RawString(prefix)
+		if in.ID == nil {
+			out.RawString("null")
+		} else {
+			out.String(string(*in.ID))
+		}
+	}
+	{
+		const prefix string = ",\"pubkey\":"
+		out.RawString(prefix)
+		if in.PubKey == nil {
+			out.RawString("null")
+		} else {
+			out.String(string(*in.PubKey))
+		}
 	}
 	{
 		const prefix string = ",\"sig\":"
 		out.RawString(prefix)
-		out.String(string(in.Sig))
+		if in.Sig == nil {
+			out.RawString("null")
+		} else {
+			out.String(string(*in.Sig))
+		}
 	}
 	out.RawByte('}')
 }
