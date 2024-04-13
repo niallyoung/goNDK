@@ -3,12 +3,13 @@ package event_test
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/niallyoung/goNDK/event"
 	"math/rand"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/niallyoung/goNDK/event"
 )
 
 var rnd = rand.New(rand.NewSource(time.Now().UnixNano()))
@@ -34,7 +35,7 @@ func TestEvent_Sign(t *testing.T) {
 	})
 }
 
-func TestEvent_ValidateSignature(t *testing.T) {
+func TestEvent_ValidateSignature_JSON_Unmarshal(t *testing.T) {
 	t.Run("sign with a valid privatekey", func(t *testing.T) {
 		var e event.Event
 		err := json.Unmarshal([]byte(validEventJSON), &e)
