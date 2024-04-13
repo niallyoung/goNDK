@@ -39,6 +39,7 @@ func TestEvent_ValidateSignature_JSON_Unmarshal(t *testing.T) {
 	t.Run("sign json.Unmarshal with a valid privatekey", func(t *testing.T) {
 		var e event.Event
 		err := json.Unmarshal([]byte(validEventJSON), &e)
+		assert.NoError(t, err)
 		ok, err := e.ValidateSignature()
 		assert.True(t, ok)
 		assert.NoError(t, err)

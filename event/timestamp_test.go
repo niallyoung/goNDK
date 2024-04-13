@@ -1,11 +1,12 @@
 package event_test
 
 import (
-	"github.com/niallyoung/goNDK/event"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/niallyoung/goNDK/event"
 )
 
 func TestTime_Now(t *testing.T) {

@@ -36,7 +36,7 @@ func (e *Event) Sign(privateKey string, signOpts ...schnorr.SignOption) error {
 	return nil
 }
 
-// ValidateSignature checks if the signature is valid for the id
+// ValidateSignature checks if the signature is valid for the id.
 func (e Event) ValidateSignature() (bool, error) {
 	// read and check pubkey
 	pk, err := hex.DecodeString(*e.PubKey)

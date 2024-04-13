@@ -14,7 +14,6 @@ func TestTag(t *testing.T) {
 		assert.Equal(t, []byte(nil), b1)
 		assert.Equal(t, []byte{0x5b, 0x22, 0x61, 0x22, 0x2c, 0x22, 0x62, 0x22, 0x5d}, b2)
 	})
-
 }
 
 func TestTags(t *testing.T) {

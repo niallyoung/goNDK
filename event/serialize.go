@@ -6,7 +6,8 @@ import (
 	"github.com/mailru/easyjson"
 )
 
-// Serialize outputs a byte array that can be hashed/signed to identify/authenticate. JSON encoding as defined in RFC4627.
+// Serialize outputs a byte array that can be hashed/signed to identify/authenticate.
+// JSON encoding as defined in RFC4627.
 func (e Event) Serialize() []byte {
 	// the serialization process is just putting everything into a JSON array
 	// so the order is kept. See NIP-01
@@ -49,8 +50,7 @@ func EscapeString(dst []byte, s string) []byte {
 		case c >= 0x20:
 			// default, rest below are control chars
 			dst = append(dst, c)
-		// TODO debug and confirm what's happening here, IDE reports zero coverage for all remaining cases?!?
-		case c == 0x08:
+		case c == 0x08: // TODO debug and confirm what's happening here, IDE reports zero coverage for all remaining cases?!?
 			dst = append(dst, []byte{'\\', 'b'}...)
 		case c < 0x09:
 			dst = append(dst, []byte{'\\', 'u', '0', '0', '0', '0' + c}...)
@@ -74,7 +74,7 @@ func EscapeString(dst []byte, s string) []byte {
 	return dst
 }
 
-// String implements Stringer interface, returns raw JSON as a string
+// String implements Stringer interface, returns raw JSON as a string.
 func (e Event) String() string {
 	j, _ := easyjson.Marshal(e)
 	return string(j)
