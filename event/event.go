@@ -29,10 +29,7 @@ type Event struct {
 	Sig       *string   `json:"sig"`    // set by Sign()
 }
 
-func NewEvent(
-	kind int, content string, tags Tags,
-	createdAt *int64, id *string, pubkey *string, sig *string,
-) *Event {
+func NewEvent(kind int, content string, tags Tags, createdAt *int64, id *string, pubkey *string, sig *string) *Event {
 	return &Event{
 		Kind:      kind,
 		Content:   content,

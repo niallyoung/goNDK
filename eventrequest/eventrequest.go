@@ -2,7 +2,7 @@ package eventrequest
 
 import "github.com/niallyoung/goNDK/event"
 
-// EventRequest is intended for initial receipt and JSON unmarshalling, before constructing an Event{}
+// EventRequest is for handler receipt and JSON unmarshal, before constructing an event.Event{}
 type EventRequest struct {
 	ID        string     `json:"id"`
 	PubKey    string     `json:"pubkey"`
