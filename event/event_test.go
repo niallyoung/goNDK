@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/aws/smithy-go/ptr"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/niallyoung/goNDK/event"
@@ -13,7 +12,7 @@ import (
 // TODO test/fixtures/* ?
 var validEvent = func() *event.Event {
 	return event.NewEvent(
-		ptr.String("b52cc46fc9e38e51e8774cc13c00523c013d371d1dd5f42113f06e43ed870a76"),
+		"b52cc46fc9e38e51e8774cc13c00523c013d371d1dd5f42113f06e43ed870a76",
 		int64(1712350548),
 		1,
 		"GM nostr welcome to Saturday!",
@@ -24,7 +23,7 @@ var validEvent = func() *event.Event {
 }
 var validEventNoTags = func() *event.Event {
 	return event.NewEvent(
-		ptr.String("b52cc46fc9e38e51e8774cc13c00523c013d371d1dd5f42113f06e43ed870a76"),
+		"b52cc46fc9e38e51e8774cc13c00523c013d371d1dd5f42113f06e43ed870a76",
 		int64(1712350548),
 		1,
 		"GM nostr welcome to Saturday!",

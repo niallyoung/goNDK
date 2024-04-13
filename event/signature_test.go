@@ -36,11 +36,20 @@ func TestEvent_Sign(t *testing.T) {
 }
 
 func TestEvent_ValidateSignature_JSON_Unmarshal(t *testing.T) {
-	t.Run("sign with a valid privatekey", func(t *testing.T) {
+	t.Run("sign json.Unmarshal with a valid privatekey", func(t *testing.T) {
 		var e event.Event
 		err := json.Unmarshal([]byte(validEventJSON), &e)
 		ok, err := e.ValidateSignature()
 		assert.True(t, ok)
+		assert.NoError(t, err)
+	})
+}
+
+func TestEvent_ValidateSignature(t *testing.T) {
+	t.Run("sign NewEvent() with a valid privatekey", func(t *testing.T) {
+		e := validEvent()
+		ok, err := e.ValidateSignature()
+		assert.True(t, ok) // FIXME failing Step 9 of schnorrVerify()
 		assert.NoError(t, err)
 	})
 

@@ -1,7 +1,6 @@
 package event
 
 import (
-	"cmp"
 	"crypto/sha256"
 	"encoding/hex"
 
@@ -13,7 +12,6 @@ import (
 
 // Eventer TODO what's a better name?
 type Eventer interface {
-	ID() string
 	Serialize() []byte
 	Sign(privateKey string, signOpts ...schnorr.SignOption) error
 	String() string
@@ -22,10 +20,9 @@ type Eventer interface {
 	ValidateSignature() (bool, error)
 }
 
-// Event is a fully-formed NOSTR Event, signed and ready for publishing
+// Event is a fully-formed NOSTR Event, signed* and ready for publishing
 type Event struct {
-	//nolint:all
-	id        *string   `json:"id"`
+	ID        string    `json:"id"`
 	PubKey    string    `json:"pubkey"`
 	CreatedAt Timestamp `json:"created_at"`
 	Kind      int       `json:"kind"`
@@ -34,9 +31,9 @@ type Event struct {
 	Sig       string    `json:"sig"`
 }
 
-func NewEvent(id *string, createdAt int64, kind int, content string, pubkey string, sig string, tags Tags) *Event {
+func NewEvent(id string, createdAt int64, kind int, content string, pubkey string, sig string, tags Tags) *Event {
 	return &Event{
-		id:        id,
+		ID:        id,
 		PubKey:    pubkey,
 		CreatedAt: Timestamp(createdAt),
 		Kind:      kind,
@@ -46,13 +43,9 @@ func NewEvent(id *string, createdAt int64, kind int, content string, pubkey stri
 	}
 }
 
-func (e Event) ID() string {
-	return cmp.Or(*e.id, e.setID())
-}
-
 func (e Event) setID() string {
-	*e.id = generateID(e)
-	return *e.id
+	e.ID = generateID(e)
+	return e.ID
 }
 
 func generateID(e Event) string {
@@ -62,7 +55,7 @@ func generateID(e Event) string {
 
 func (e Event) Validate() error {
 	if err := validation.ValidateStruct(&e,
-		validation.Field(&e.id, validation.Required, is.Hexadecimal, validation.Length(64, 64)),     // hex, sha256 event serialization
+		validation.Field(&e.ID, validation.Required, is.Hexadecimal, validation.Length(64, 64)),     // hex, sha256 event serialization
 		validation.Field(&e.PubKey, validation.Required, is.Hexadecimal, validation.Length(64, 64)), // hex, secp256k1 schnorr public key
 		validation.Field(&e.CreatedAt, validation.Required, validation.Min(0)),
 		validation.Field(&e.Kind, validation.Required),                                                  // only ever positive: 0..N?
@@ -90,12 +83,12 @@ func (e Event) Validate() error {
 }
 
 func (e Event) ValidateID() error {
-	if e.id == nil {
-		return errors.New("id is nil")
+	if e.ID == "" {
+		return errors.New("ID is empty")
 	}
 
-	if *e.id != generateID(e) {
-		return errors.New("id is invalid")
+	if e.ID != generateID(e) {
+		return errors.New("ID is invalid")
 	}
 
 	return nil

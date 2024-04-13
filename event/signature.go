@@ -30,7 +30,7 @@ func (e *Event) Sign(privateKey string, signOpts ...schnorr.SignOption) error {
 		return err
 	}
 
-	*e.id = hex.EncodeToString(h[:])
+	e.ID = hex.EncodeToString(h[:])
 	e.Sig = hex.EncodeToString(sig.Serialize())
 
 	return nil
