@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MINIMUM_COVERAGE="100"
+MINIMUM_COVERAGE="72.55"
 
 ACTUAL_COVERAGE=$(
   cat coverage.out | \

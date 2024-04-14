@@ -1,10 +1,14 @@
 SHELL:=/bin/bash
 
-NAME:=gondo
+NAME:=goNDK
 HASH:=$(shell git rev-parse --short HEAD)
 
-all: test cover
+all: lint test cover
 .PHONY: all
+
+generate:
+	go run github.com/mailru/easyjson/easyjson -all event/event.go
+.PHONY: generate
 
 lint:
 	go run github.com/golangci/golangci-lint/cmd/golangci-lint run --timeout=5m ./... | tee lint.out
@@ -15,13 +19,8 @@ test:
 .PHONY: test
 
 cover:
-	@go test \
-		-timeout=5m \
-		-coverprofile=coverage.out \
-		-covermode=atomic \
-		-coverpkg $(go list github.com/niallyoung/gondo/...) \
-		./...
-	$(./.meta/cover.sh)
+	go test -timeout=5m -coverprofile=coverage.out ./...
+	./.meta/cover.sh
 .PHONY: cover
 
 docker.build:

@@ -1,22 +1,28 @@
-# gondo
+# goNDK
 
-[![Run Tests](https://github.com/niallyoung/gondo/actions/workflows/main.yaml/badge.svg)](https://github.com/niallyoung/gondo/actions/workflows/main.yaml)
+[![Run Tests](https://github.com/niallyoung/goNDK/actions/workflows/main.yaml/badge.svg)](https://github.com/niallyoung/goNDK/actions/workflows/main.yaml)
 
-gondo is to be an Oasis, for NOSTR Development, in Golang.
+goNDK is a NOSTR Development Kit, for Golang.
 
-* low-level and intermediate foundations, for rapid prototyping and building prod-ready solutions
-* structured Go, with coherent packages, interfaces, dependency injection, high test coverage
-* built upon, around and inspired by:
-  * [go-nostr](https://github.com/nbd-wtf/go-nostr)
-  * [khatru](https://github.com/fiatjaf/khatru)
-  * [nostr-domain](https://github.com/dextryz/nostr-domain)
+## Goals
+
+* a solid NOSTR foundation in Go, useful for rapid prototyping and production-ready solutions at scale
+* cohesive, well tested, injectable, idiomatic low-level funcs, types and interfaces
+* a variety of simple/example clients, relays, go funcs, helpers
+* help NOSTR to grow: make it easy to build and run NOSTR relays and clients in Go
 
 ## TODO
-- WIP: flesh out Event{}, funcs, types, interfaces, tests
-- flesh out event/*
-- semver / tags upon merge to main
-- flesh out Relay{}, funcs, types, interfaces, tests
-- flesh out relay/*
+
+- `Client{}`, `Identity{}`, stream events from relays, publish to relays
+- `Relay{}`, `Transport{}`, `ConnectionHandler{}`, `Outbox{}`, `Inbox{}`
+
+## Thanks
+
+Built upon, around and inspired by:
+
+* [go-nostr](https://github.com/nbd-wtf/go-nostr)
+* [khatru](https://github.com/fiatjaf/khatru)
+* [nostr-domain](https://github.com/dextryz/nostr-domain)
 
 MIT License
 Copyright (c) 2024 Niall Young <5465765+niallyoung@users.noreply.github.com>

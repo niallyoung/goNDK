@@ -1,0 +1,29 @@
+package event
+
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
+
+func TestTag(t *testing.T) {
+	t.Run("marshalTo", func(t *testing.T) {
+		tag := Tag{"a", "b"}
+		var b1 []byte
+		b2 := tag.marshalTo(b1)
+		assert.Equal(t, []byte(nil), b1)
+		assert.Equal(t, []byte{0x5b, 0x22, 0x61, 0x22, 0x2c, 0x22, 0x62, 0x22, 0x5d}, b2)
+	})
+}
+
+func TestTags(t *testing.T) {
+	t.Run("marshalTo", func(t *testing.T) {
+		tags := make(Tags, 0, 1)
+		tags = append(tags, Tag{"first", "second"}, Tag{"third", "fourth"})
+		assert.Equal(t, 2, len(tags))
+		assert.Equal(t, Tags{Tag{"first", "second"}, Tag{"third", "fourth"}}, tags)
+		var b1 []byte
+		b2 := tags.marshalTo(b1)
+		assert.Equal(t, []byte{0x5b, 0x5b, 0x22, 0x66, 0x69, 0x72, 0x73, 0x74, 0x22, 0x2c, 0x22, 0x73, 0x65, 0x63, 0x6f, 0x6e, 0x64, 0x22, 0x5d, 0x2c, 0x5b, 0x22, 0x74, 0x68, 0x69, 0x72, 0x64, 0x22, 0x2c, 0x22, 0x66, 0x6f, 0x75, 0x72, 0x74, 0x68, 0x22, 0x5d, 0x5d}, b2)
+	})
+}
