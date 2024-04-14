@@ -15,7 +15,6 @@ type Eventer interface {
 	Sign(privateKey string, signOpts ...schnorr.SignOption) error
 	String() string
 	Validate() error
-	ValidateID() error
 	ValidateSignature() (bool, error)
 }
 
