@@ -4,7 +4,7 @@ package eventrequest
 type EventRequest struct {
 	ID        string     `json:"id"`
 	PubKey    string     `json:"pubkey"`
-	CreatedAt int64      `json:"created_at"`
+	CreatedAt Timestamp  `json:"created_at"`
 	Kind      int        `json:"kind"`
 	Tags      [][]string `json:"tags"`
 	Content   string     `json:"content"`

@@ -7,16 +7,16 @@ import (
 )
 
 func TestEvent_Serialize(t *testing.T) {
-	t.Run("Serialize() returns expected JSON", func(t *testing.T) {
-		e := validEvent()
+	t.Run("given a valid Event, Serialize() returns the expected JSON", func(t *testing.T) {
+		e := ValidEvent()
 		bytes := e.Serialize()
-		assert.Equal(t, validEventSerialize, string(bytes))
+		assert.Equal(t, ValidEventSerialize, string(bytes))
 	})
 }
 
 func TestEvent_String(t *testing.T) {
-	t.Run("validEvent.String() returns expected string", func(t *testing.T) {
-		e := validEvent()
-		assert.Equal(t, validEventString, e.String())
+	t.Run("given a valid Event, String() returns the expected string", func(t *testing.T) {
+		e := ValidEvent()
+		assert.Equal(t, ValidEventString, e.String())
 	})
 }

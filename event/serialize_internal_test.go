@@ -21,7 +21,7 @@ func TestEvent_escapeString(t *testing.T) {
 			[]byte("destination \"quoted\"\"content \\\"quoted\\\"\""),
 		},
 		{
-			"escapted back-slash",
+			"escaped back-slash",
 			[]byte("destination \\back-slashed\\"),
 			"content \\\\double-slashed\\\\",
 			[]byte("destination \\back-slashed\\\"content \\\\\\\\double-slashed\\\\\\\\\""),
@@ -32,6 +32,9 @@ func TestEvent_escapeString(t *testing.T) {
 			hex.EncodeToString([]byte{0x21}),
 			[]byte{0x21, 0x22, 0x32, 0x31, 0x22},
 		},
+
+		// TODO investigate eventtest coverage of serialize.go lines 53-69
+		// TODO we don't seem to have eventtest coverage for the eventtest cases below
 		{
 			"0x08",
 			[]byte{0x08},

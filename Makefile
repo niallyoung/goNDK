@@ -19,7 +19,7 @@ test:
 .PHONY: test
 
 cover:
-	go test ./... -timeout=5m -coverprofile=coverage.out -covermode=atomic ./...
+	go test -timeout=5m -coverprofile=coverage.out ./...
 	./.meta/cover.sh
 .PHONY: cover
 
