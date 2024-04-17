@@ -46,11 +46,11 @@ var event event.Event
 err := json.Unmarshal([]byte(`{"kind": 1, "content": "hello world!", ... }`), &event)
 
 // create a new, unsigned event
-var e := event.NewEvent(1, "hello world!", event.Tags(nil), nil, nil, nil, nil)
+e := event.NewEvent(1, "hello world!", event.Tags(nil), nil, nil, nil, nil)
 
 err := e.Validate() // Event value validation
 
-err := e.Sign(privateKey)        // Sign an Event
+err := e.Sign(privateKey.Key.String())        // Sign an Event
 ok, err := e.ValidateSignature() // Validate its Signature
 
 text := e.String()     // Event JSON serialization
