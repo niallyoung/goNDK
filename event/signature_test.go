@@ -74,6 +74,18 @@ func TestEvent_ValidateSignature_NewEvent(t *testing.T) {
 		})
 	})
 
+	t.Run("given an valid Event with minimal fields (missing PubKey|Sig|ID)", func(t *testing.T) {
+		e := ValidEventMinimal()
+		t.Run("when we validate its signature", func(t *testing.T) {
+			ok, err := e.ValidateSignature()
+			t.Run("then we get an error, and unsuccessful validation", func(t *testing.T) {
+				assert.False(t, ok)
+				assert.Error(t, err)
+				assert.ErrorContains(t, err, "unsigned event")
+			})
+		})
+	})
+
 	t.Run("given an invalid Event (bad PubKey)", func(t *testing.T) {
 		e := ValidEvent()
 		*e.PubKey = "invalid"

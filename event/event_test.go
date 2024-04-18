@@ -10,8 +10,13 @@ import (
 )
 
 func TestNewEvent(t *testing.T) {
-	t.Run("NewEvent() returns an Event", func(t *testing.T) {
+	t.Run("given ValidEvent(), NewEvent() returns an Event", func(t *testing.T) {
 		e := ValidEvent()
+		assert.NotNil(t, e)
+	})
+
+	t.Run("given ValidEventMinimal(), NewEvent() returns an Event", func(t *testing.T) {
+		e := ValidEventMinimal()
 		assert.NotNil(t, e)
 	})
 }

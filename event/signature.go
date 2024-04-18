@@ -3,6 +3,7 @@ package event
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"errors"
 	"fmt"
 
 	"github.com/btcsuite/btcd/btcec/v2"
@@ -38,6 +39,9 @@ func (e *Event) Sign(privateKey string, signOpts ...schnorr.SignOption) error {
 
 // ValidateSignature checks if the signature is valid for the id.
 func (e Event) ValidateSignature() (bool, error) {
+	if e.PubKey == nil || e.Sig == nil || e.ID == nil {
+		return false, errors.New("unsigned event")
+	}
 	// read and check pubkey
 	pk, err := hex.DecodeString(*e.PubKey)
 	if err != nil {
