@@ -1,8 +1,6 @@
 package event
 
 import (
-	"cmp"
-
 	"github.com/btcsuite/btcd/btcec/v2/schnorr"
 	"github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
@@ -29,11 +27,18 @@ type Event struct {
 }
 
 func NewEvent(kind int, content string, tags Tags, createdAt *int64, id *string, pubkey *string, sig *string) *Event {
+	var timestamp Timestamp
+	if createdAt == nil {
+		timestamp = Now()
+	} else {
+		timestamp = Timestamp(*createdAt)
+	}
+
 	return &Event{
 		Kind:      kind,
 		Content:   content,
 		Tags:      tags,
-		CreatedAt: cmp.Or(Timestamp(*createdAt), Now()),
+		CreatedAt: timestamp,
 		ID:        id,
 		PubKey:    pubkey,
 		Sig:       sig,

@@ -50,8 +50,8 @@ e := event.NewEvent(1, "hello world!", event.Tags(nil), nil, nil, nil, nil)
 
 err := e.Validate() // Event value validation
 
-err := e.Sign(privateKey.Key.String())        // Sign an Event
-ok, err := e.ValidateSignature() // Validate its Signature
+err := e.Sign(privateKey.Key.String()) // Sign an Event
+ok, err := e.ValidateSignature()       // Validate its Signature
 
 text := e.String()     // Event JSON serialization
 bytes := e.Serialize() // custom JSON Array serialization, for identity / authentication
