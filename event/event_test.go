@@ -42,9 +42,16 @@ func TestEvent_Validate(t *testing.T) {
 		assert.NoError(t, err)
 	})
 
-	t.Run("invalid Event", func(t *testing.T) {
-		e := InValidEvent()
+	t.Run("invalid Event.CreatedAt", func(t *testing.T) {
+		e := InvalidEventCreatedAt()
 		err := e.Validate()
 		assert.Error(t, err)
+	})
+
+	t.Run("invalid Event.Sig", func(t *testing.T) {
+		e := InvalidEventSignature()
+		err := e.Validate()
+		assert.Error(t, err)
+		assert.ErrorContains(t, err, "signature not valid")
 	})
 }
