@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [v0.0.4](https://github.com/niallyoung/goNDK/tree/v0.0.4) (2024-04-19)
+
+[Full Changelog](https://github.com/niallyoung/goNDK/compare/v0.0.3...v0.0.4)
+
+- additional test coverage = 84.88% total
+
 ## [v0.0.3](https://github.com/niallyoung/goNDK/tree/v0.0.3) (2024-04-18)
 
 [Full Changelog](https://github.com/niallyoung/goNDK/compare/v0.0.2...v0.0.3)

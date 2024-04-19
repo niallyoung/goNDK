@@ -1,9 +1,9 @@
 #!/bin/bash
 
-MINIMUM_COVERAGE="72.55"
+MINIMUM_COVERAGE="84.88"
 
 ACTUAL_COVERAGE=$(
-  cat coverage.out | \
+  cat coverage.out | grep -v "easyjson" | \
     awk 'BEGIN {cov=0; stat=0;} \
       $3!="" { cov+=($3==1?$2:0); stat+=$2; } \
       END {printf("%.2f\n", (cov/stat)*100);}'
