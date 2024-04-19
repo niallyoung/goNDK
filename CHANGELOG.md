@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [v0.0.5](https://github.com/niallyoung/goNDK/tree/v0.0.5) (2024-04-19)
+
+[Full Changelog](https://github.com/niallyoung/goNDK/compare/v0.0.4...v0.0.5)
+
+- remove eventrequest for now = 85.71% coverage
+
 ## [v0.0.4](https://github.com/niallyoung/goNDK/tree/v0.0.4) (2024-04-19)
 
 [Full Changelog](https://github.com/niallyoung/goNDK/compare/v0.0.3...v0.0.4)
