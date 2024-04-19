@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [v0.0.6](https://github.com/niallyoung/goNDK/tree/v0.0.6) (2024-04-20)
+
+[Full Changelog](https://github.com/niallyoung/goNDK/compare/v0.0.5...v0.0.6)
+
+- event.Sign() bugfix
+
 ## [v0.0.5](https://github.com/niallyoung/goNDK/tree/v0.0.5) (2024-04-19)
 
 [Full Changelog](https://github.com/niallyoung/goNDK/compare/v0.0.4...v0.0.5)

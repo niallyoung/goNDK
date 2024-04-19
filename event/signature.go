@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/aws/smithy-go/ptr"
 	"github.com/btcsuite/btcd/btcec/v2"
 	"github.com/btcsuite/btcd/btcec/v2/schnorr"
 )
@@ -23,7 +24,7 @@ func (e *Event) Sign(privateKey string, signOpts ...schnorr.SignOption) error {
 
 	sk, pk := btcec.PrivKeyFromBytes(s)
 	pkBytes := pk.SerializeCompressed()
-	*e.PubKey = hex.EncodeToString(pkBytes[1:])
+	e.PubKey = ptr.String(hex.EncodeToString(pkBytes[1:]))
 
 	h := sha256.Sum256(e.Serialize())
 	sig, err := schnorr.Sign(sk, h[:], signOpts...)
@@ -31,8 +32,8 @@ func (e *Event) Sign(privateKey string, signOpts ...schnorr.SignOption) error {
 		return err
 	}
 
-	*e.ID = hex.EncodeToString(h[:])
-	*e.Sig = hex.EncodeToString(sig.Serialize())
+	e.ID = ptr.String(hex.EncodeToString(h[:]))
+	e.Sig = ptr.String(hex.EncodeToString(sig.Serialize()))
 
 	return nil
 }
