@@ -2,42 +2,31 @@ package event
 
 import (
 	"fmt"
-
-	"github.com/mailru/easyjson"
 )
 
-// Serialize outputs a byte array that can be hashed/signed to identify/authenticate.
-// JSON encoding as defined in RFC4627.
+// Serialize outputs a []byte JSON array of the Event
 func (e Event) Serialize() []byte {
-	// the serialization process is just putting everything into a JSON array
-	// so the order is kept. See NIP-01
 	dst := make([]byte, 0)
 
-	// the header portion is easy to serialize
+	// header
 	// [0,"pubkey",created_at,kind,[
-	dst = append(dst, []byte(
-		fmt.Sprintf(
-			"[0,\"%s\",%d,%d,",
-			*e.PubKey,
-			e.CreatedAt,
-			e.Kind,
-		))...)
+	dst = append(dst, []byte(fmt.Sprintf("[0,%q,%d,%d,", *e.PubKey, e.CreatedAt, e.Kind))...)
 
 	// tags
 	dst = e.Tags.marshalTo(dst)
 	dst = append(dst, ',')
 
-	// content needs to be escaped in general as it is user generated.
-	dst = EscapeString(dst, e.Content)
+	// content
+	dst = escapeString(dst, e.Content)
 	dst = append(dst, ']')
 
 	return dst
 }
 
-// Escaping strings for JSON encoding according to RFC8259.
-// Also encloses result in quotation marks "".
-func EscapeString(dst []byte, s string) []byte {
+// escapeString for JSON encoding according to RFC8259
+func escapeString(dst []byte, s string) []byte {
 	dst = append(dst, '"')
+
 	for i := 0; i < len(s); i++ {
 		c := s[i]
 		switch {
@@ -47,7 +36,6 @@ func EscapeString(dst []byte, s string) []byte {
 			dst = append(dst, []byte{'\\', '\\'}...)
 		case c >= 0x20: // default (>= space)
 			dst = append(dst, c)
-		// control chars
 		case c == 0x08: // backspace
 			dst = append(dst, []byte{'\\', 'b'}...)
 		case c < 0x09: // (< horizontal tabulation)
@@ -69,11 +57,6 @@ func EscapeString(dst []byte, s string) []byte {
 		}
 	}
 	dst = append(dst, '"')
-	return dst
-}
 
-// String implements Stringer interface, returns raw JSON as a string.
-func (e Event) String() string {
-	j, _ := easyjson.Marshal(e)
-	return string(j)
+	return dst
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/btcsuite/btcd/btcec/v2/schnorr"
 	"github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
+	"github.com/mailru/easyjson"
 )
 
 // Eventer TODO what's a better name?
@@ -44,6 +45,12 @@ func NewEvent(kind int, content string, tags Tags, createdAt *int64, id *string,
 		PubKey:    pubkey,
 		Sig:       sig,
 	}
+}
+
+// String implements Stringer interface, returns raw JSON as a string.
+func (e Event) String() string {
+	j, _ := easyjson.Marshal(e)
+	return string(j)
 }
 
 func (e Event) Validate() error {

@@ -95,8 +95,8 @@ func TestEvent_escapeString(t *testing.T) {
 
 	for _, s := range scenarios {
 		t.Run(s.Name, func(t *testing.T) {
-			assert.Equal(t, s.expectedBytes, EscapeString(s.givenDst, s.givenContent))
-			assert.Equal(t, string(s.expectedBytes), string(EscapeString(s.givenDst, s.givenContent)))
+			assert.Equal(t, s.expectedBytes, escapeString(s.givenDst, s.givenContent))
+			assert.Equal(t, string(s.expectedBytes), string(escapeString(s.givenDst, s.givenContent)))
 		})
 	}
 }
