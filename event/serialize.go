@@ -41,32 +41,30 @@ func EscapeString(dst []byte, s string) []byte {
 	for i := 0; i < len(s); i++ {
 		c := s[i]
 		switch {
-		case c == '"':
-			// quotation mark
+		case c == '"': // quotation mark / double-quote
 			dst = append(dst, []byte{'\\', '"'}...)
-		case c == '\\':
-			// reverse solidus
+		case c == '\\': // reverse solidus / backslash
 			dst = append(dst, []byte{'\\', '\\'}...)
-		case c >= 0x20:
-			// default, rest below are control chars
+		case c >= 0x20: // default (>= space)
 			dst = append(dst, c)
-		case c == 0x08: // TODO debug and confirm what's happening here, IDE reports zero coverage for all remaining cases?!?
+		// control chars
+		case c == 0x08: // backspace
 			dst = append(dst, []byte{'\\', 'b'}...)
-		case c < 0x09:
+		case c < 0x09: // (< horizontal tabulation)
 			dst = append(dst, []byte{'\\', 'u', '0', '0', '0', '0' + c}...)
-		case c == 0x09:
+		case c == 0x09: // horizontal tabulation
 			dst = append(dst, []byte{'\\', 't'}...)
-		case c == 0x0a:
+		case c == 0x0a: // line feed / newline
 			dst = append(dst, []byte{'\\', 'n'}...)
-		case c == 0x0c:
+		case c == 0x0c: // form feed
 			dst = append(dst, []byte{'\\', 'f'}...)
-		case c == 0x0d:
+		case c == 0x0d: // carriage return
 			dst = append(dst, []byte{'\\', 'r'}...)
-		case c < 0x10:
+		case c < 0x10: // (< data link escape)
 			dst = append(dst, []byte{'\\', 'u', '0', '0', '0', 0x57 + c}...)
-		case c < 0x1a:
+		case c < 0x1a: // (< substitute)
 			dst = append(dst, []byte{'\\', 'u', '0', '0', '1', 0x20 + c}...)
-		case c < 0x20:
+		case c < 0x20: // (< space)
 			dst = append(dst, []byte{'\\', 'u', '0', '0', '1', 0x47 + c}...)
 		}
 	}
