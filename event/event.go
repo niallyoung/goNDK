@@ -1,10 +1,11 @@
 package event
 
 import (
+	"errors"
+
 	"github.com/btcsuite/btcd/btcec/v2/schnorr"
 	"github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
-	"github.com/pkg/errors"
 )
 
 // Eventer TODO what's a better name?
@@ -67,7 +68,7 @@ func (e Event) Validate() error {
 	}
 
 	if ok, err := e.ValidateSignature(); !ok {
-		return errors.Wrap(err, "signature not valid")
+		return errors.Join(err, errors.New("signature not valid"))
 	}
 
 	return nil
