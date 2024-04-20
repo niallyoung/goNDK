@@ -1,10 +1,12 @@
 package event
 
 import (
+	"errors"
+
 	"github.com/btcsuite/btcd/btcec/v2/schnorr"
 	"github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
-	"github.com/pkg/errors"
+	"github.com/mailru/easyjson"
 )
 
 // Eventer TODO what's a better name?
@@ -45,6 +47,12 @@ func NewEvent(kind int, content string, tags Tags, createdAt *int64, id *string,
 	}
 }
 
+// String implements Stringer interface, returns raw JSON as a string.
+func (e Event) String() string {
+	j, _ := easyjson.Marshal(e)
+	return string(j)
+}
+
 func (e Event) Validate() error {
 	if err := validation.ValidateStruct(&e,
 		validation.Field(&e.Kind, validation.Required),
@@ -67,7 +75,7 @@ func (e Event) Validate() error {
 	}
 
 	if ok, err := e.ValidateSignature(); !ok {
-		return errors.Wrap(err, "signature not valid")
+		return errors.Join(err, errors.New("signature not valid"))
 	}
 
 	return nil

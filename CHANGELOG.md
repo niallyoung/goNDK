@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## [v0.0.7](https://github.com/niallyoung/goNDK/tree/v0.0.7) (2024-04-20)
+
+[Full Changelog](https://github.com/niallyoung/goNDK/compare/v0.0.6...v0.0.7)
+
+- 96.47% test coverage
+- fixed serialization tests
+- removed unnecessary deps
+- simplify and polish
+
 ## [v0.0.6](https://github.com/niallyoung/goNDK/tree/v0.0.6) (2024-04-20)
 
 [Full Changelog](https://github.com/niallyoung/goNDK/compare/v0.0.5...v0.0.6)

@@ -9,6 +9,14 @@ import (
 	"github.com/niallyoung/goNDK/event"
 )
 
+func TestNewTimestamp(t *testing.T) {
+	t.Run("constructor", func(t *testing.T) {
+		ti, _ := time.Parse(time.RFC3339, "2024-04-20T09:43:35Z")
+		ts := event.NewTimestamp(ti)
+		assert.Equal(t, ts.Time(), ti)
+	})
+}
+
 func TestTime_Now(t *testing.T) {
 	t.Run("Now", func(t *testing.T) {
 		now := event.Now()

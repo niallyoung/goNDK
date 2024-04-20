@@ -4,18 +4,17 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"errors"
-	"fmt"
 
 	"github.com/aws/smithy-go/ptr"
 	"github.com/btcsuite/btcd/btcec/v2"
 	"github.com/btcsuite/btcd/btcec/v2/schnorr"
 )
 
-// Sign signs an event with a given privateKey.
+// Sign signs an event with the given privateKey
 func (e *Event) Sign(privateKey string, signOpts ...schnorr.SignOption) error {
 	s, err := hex.DecodeString(privateKey)
 	if err != nil {
-		return fmt.Errorf("sign called with invalid private key '%s': %w", privateKey, err)
+		return errors.Join(err, errors.New("cannot sign with invalid private key"))
 	}
 
 	if e.Tags == nil {
@@ -43,25 +42,27 @@ func (e Event) ValidateSignature() (bool, error) {
 	if e.PubKey == nil || e.Sig == nil || e.ID == nil {
 		return false, errors.New("unsigned event")
 	}
-	// read and check pubkey
+
+	// decode and parse pubkey
 	pk, err := hex.DecodeString(*e.PubKey)
 	if err != nil {
-		return false, fmt.Errorf("event pubkey '%s' is invalid hex: %w", *e.PubKey, err)
+		return false, errors.Join(err, errors.New("pubkey hex error"))
 	}
 
 	pubkey, err := schnorr.ParsePubKey(pk)
 	if err != nil {
-		return false, fmt.Errorf("event has invalid pubkey '%s': %w", *e.PubKey, err)
+		return false, errors.Join(err, errors.New("invalid pubkey"))
 	}
 
-	// read signature
+	// decode and parse signature
 	s, err := hex.DecodeString(*e.Sig)
 	if err != nil {
-		return false, fmt.Errorf("signature '%s' is invalid hex: %w", *e.Sig, err)
+		return false, errors.Join(err, errors.New("signature hex error"))
 	}
+
 	sig, err := schnorr.ParseSignature(s)
 	if err != nil {
-		return false, fmt.Errorf("failed to parse signature: %w", err)
+		return false, errors.Join(err, errors.New("failed to parse signature"))
 	}
 
 	// check signature
