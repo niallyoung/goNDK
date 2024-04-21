@@ -24,7 +24,7 @@ type Event struct {
 	Tags      Tags      `json:"tags"`
 	CreatedAt Timestamp `json:"created_at"`
 	ID        *string   `json:"id"`     // set by Sign()
-	PubKey    *string   `json:"pubkey"` // set by Sign()
+	Pubkey    *string   `json:"pubkey"` // set by Sign()
 	Sig       *string   `json:"sig"`    // set by Sign()
 }
 
@@ -42,7 +42,7 @@ func NewEvent(kind int, content string, tags Tags, createdAt *int64, id *string,
 		Tags:      tags,
 		CreatedAt: timestamp,
 		ID:        id,
-		PubKey:    pubkey,
+		Pubkey:    pubkey,
 		Sig:       sig,
 	}
 }
@@ -63,8 +63,8 @@ func (e Event) Validate() error {
 		validation.Field(&e.ID, // hex, sha256(event.Serialize())
 			validation.When(e.ID != nil, is.Hexadecimal, validation.Length(64, 64)),
 		),
-		validation.Field(&e.PubKey, // hex, secp256k1 schnorr public key derived from Sign(privatekey, ...)
-			validation.When(e.PubKey != nil, is.Hexadecimal, validation.Length(64, 64)),
+		validation.Field(&e.Pubkey, // hex, secp256k1 schnorr public key derived from Sign(privatekey, ...)
+			validation.When(e.Pubkey != nil, is.Hexadecimal, validation.Length(64, 64)),
 		),
 		validation.Field(
 			&e.Sig, // hex, pubkey signed serialization

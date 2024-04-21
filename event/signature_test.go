@@ -74,7 +74,7 @@ func TestEvent_ValidateSignature_NewEvent(t *testing.T) {
 		})
 	})
 
-	t.Run("given an valid Event with minimal fields (missing PubKey|Sig|ID)", func(t *testing.T) {
+	t.Run("given an valid Event with minimal fields (missing Pubkey|Sig|ID)", func(t *testing.T) {
 		e := ValidEventMinimal()
 		t.Run("when we validate its signature", func(t *testing.T) {
 			ok, err := e.ValidateSignature()
@@ -86,9 +86,9 @@ func TestEvent_ValidateSignature_NewEvent(t *testing.T) {
 		})
 	})
 
-	t.Run("given an invalid Event (bad PubKey)", func(t *testing.T) {
+	t.Run("given an invalid Event (bad Pubkey)", func(t *testing.T) {
 		e := ValidEvent()
-		*e.PubKey = "invalid"
+		*e.Pubkey = "invalid"
 		t.Run("when we validate its signature", func(t *testing.T) {
 			ok, err := e.ValidateSignature()
 			t.Run("then we get an error, and unsuccessful validation", func(t *testing.T) {
@@ -98,9 +98,9 @@ func TestEvent_ValidateSignature_NewEvent(t *testing.T) {
 		})
 	})
 
-	t.Run("given an invalid Event (bad PubKey)", func(t *testing.T) {
+	t.Run("given an invalid Event (bad Pubkey)", func(t *testing.T) {
 		e := ValidEvent()
-		*e.PubKey = "invalid"
+		*e.Pubkey = "invalid"
 		t.Run("when we validate its signature", func(t *testing.T) {
 			ok, err := e.ValidateSignature()
 			t.Run("then we get an error, and unsuccessful validation", func(t *testing.T) {

@@ -10,7 +10,7 @@ func (e Event) Serialize() []byte {
 
 	// header
 	// [0,"pubkey",created_at,kind,[
-	dst = append(dst, []byte(fmt.Sprintf("[0,%q,%d,%d,", *e.PubKey, e.CreatedAt, e.Kind))...)
+	dst = append(dst, []byte(fmt.Sprintf("[0,%q,%d,%d,", *e.Pubkey, e.CreatedAt, e.Kind))...)
 
 	// tags
 	dst = e.Tags.marshalTo(dst)
