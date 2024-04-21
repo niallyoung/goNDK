@@ -6,22 +6,26 @@ goNDK is a NOSTR Development Kit in Golang
 
 ### GOALS
 
-* cohesive, well tested, injectable, idiomatic low-level funcs, types and interfaces
-* intended for rapid prototyping and production-ready solutions at scale
-* (TODO) a reference library of NOSTR Clients, Relays, go funcs, helpers
-* help NOSTR to grow: make it easy to build and run NOSTR relays and clients in Go
+* well-engineered framework of NOSTR types, funcs and interfaces
+* 95%+ test coverage, for rapid prototyping and production-ready solutions at scale
+* help NOSTR development in Go to be high-quality, fast, easy and fun
 
 ### STATUS
 
-goNDK was established Easter 2024, and is a **Work In Progress**
+* initial type build underway, commenced Easter 2024
 
-### USAGE
+- [x] `Event{}`
+- [ ] `Identity{}` (WIP)
+- [ ] `Client{}`, stream events from relays, publish to relays
+- [ ] `Relay{}`, `Transport{}`, `ConnectionManager{}`, `EventFilter{}`, `Outbox{}`, `Inbox{}`
+
+### DEVELOPMENT
 
 ```shell
-make lint     // golangci-lint
-make test     // unit tests
-make cover    // total coverage %, calls ./.meta/cover.sh
-make generate // code generation (easyjson)
+make lint     # golangci-lint
+make test     # unit tests
+make cover    # 95%+ coverage
+make generate # code generation (easyjson)
 
 make docker.build
 make docker.lint
@@ -30,11 +34,13 @@ make docker.cover
 make docker.shell
 ```
 
-### EXAMPLE
+### USAGE
 
 ```shell
 go get github.com/niallyoung/goNDK@latest
 ```
+
+### Event{}
 
 ```go
 import (
@@ -43,24 +49,31 @@ import (
 
 // unmarshal an incoming JSON serialised Event
 var event event.Event
-err := json.Unmarshal([]byte(`{"kind": 1, "content": "hello world!", ... }`), &event)
+err := json.Unmarshal([]byte(`{"kind": 1, "content": "...", ... }`), &event)
 
-// create a new, unsigned event
+// create and sign a new event
 e := event.NewEvent(1, "hello world!", event.Tags(nil), nil, nil, nil, nil)
-
-err := e.Validate() // Event value validation
-
 err := e.Sign(privateKey.Key.String()) // Sign an Event
-ok, err := e.ValidateSignature()       // Validate its Signature
 
-text := e.String()     // Event JSON serialization
-bytes := e.Serialize() // custom JSON Array serialization, for identity / authentication
+// serialization
+text := e.String()
+bytes := e.Serialize()
+
+// validation
+err := e.Validate()
+ok, err := e.ValidateSignature()
 ```
 
-### TODO
+### Identity{}
 
-- `Client{}`, `Identity{}`, stream events from relays, publish to relays
-- `Relay{}`, `Transport{}`, `ConnectionHandler{}`, `Outbox{}`, `Inbox{}`
+```go
+import (
+	"github.com/niallyoung/goNDK/identity"
+)
+
+i := identity.NewIdentity(pubkey, npub)
+err := i.Validate()
+```
 
 ### THANKS
 
