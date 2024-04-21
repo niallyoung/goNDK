@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [v0.0.8](https://github.com/niallyoung/goNDK/tree/v0.0.8) (2024-04-21)
+
+[Full Changelog](https://github.com/niallyoung/goNDK/compare/v0.0.7...v0.0.8)
+
+- initial Identity{}
+- 96.55% test coverage
+
 ## [v0.0.7](https://github.com/niallyoung/goNDK/tree/v0.0.7) (2024-04-20)
 
 [Full Changelog](https://github.com/niallyoung/goNDK/compare/v0.0.6...v0.0.7)
