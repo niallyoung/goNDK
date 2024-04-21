@@ -23,7 +23,7 @@ func (e *Event) Sign(privateKey string, signOpts ...schnorr.SignOption) error {
 
 	sk, pk := btcec.PrivKeyFromBytes(s)
 	pkBytes := pk.SerializeCompressed()
-	e.PubKey = ptr.String(hex.EncodeToString(pkBytes[1:]))
+	e.Pubkey = ptr.String(hex.EncodeToString(pkBytes[1:]))
 
 	h := sha256.Sum256(e.Serialize())
 	sig, err := schnorr.Sign(sk, h[:], signOpts...)
@@ -39,12 +39,12 @@ func (e *Event) Sign(privateKey string, signOpts ...schnorr.SignOption) error {
 
 // ValidateSignature checks if the signature is valid for the id.
 func (e Event) ValidateSignature() (bool, error) {
-	if e.PubKey == nil || e.Sig == nil || e.ID == nil {
+	if e.Pubkey == nil || e.Sig == nil || e.ID == nil {
 		return false, errors.New("unsigned event")
 	}
 
 	// decode and parse pubkey
-	pk, err := hex.DecodeString(*e.PubKey)
+	pk, err := hex.DecodeString(*e.Pubkey)
 	if err != nil {
 		return false, errors.Join(err, errors.New("pubkey hex error"))
 	}

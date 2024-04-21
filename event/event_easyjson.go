@@ -99,12 +99,12 @@ func easyjsonF642ad3eDecodeGithubComNiallyoungGoNDKEvent(in *jlexer.Lexer, out *
 		case "pubkey":
 			if in.IsNull() {
 				in.Skip()
-				out.PubKey = nil
+				out.Pubkey = nil
 			} else {
-				if out.PubKey == nil {
-					out.PubKey = new(string)
+				if out.Pubkey == nil {
+					out.Pubkey = new(string)
 				}
-				*out.PubKey = string(in.String())
+				*out.Pubkey = string(in.String())
 			}
 		case "sig":
 			if in.IsNull() {
@@ -184,10 +184,10 @@ func easyjsonF642ad3eEncodeGithubComNiallyoungGoNDKEvent(out *jwriter.Writer, in
 	{
 		const prefix string = ",\"pubkey\":"
 		out.RawString(prefix)
-		if in.PubKey == nil {
+		if in.Pubkey == nil {
 			out.RawString("null")
 		} else {
-			out.String(string(*in.PubKey))
+			out.String(string(*in.Pubkey))
 		}
 	}
 	{
