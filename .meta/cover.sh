@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MINIMUM_COVERAGE="96.47"
+MINIMUM_COVERAGE="96.55"
 
 ACTUAL_COVERAGE=$(
   cat coverage.out | grep -v "easyjson" | \
