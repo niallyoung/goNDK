@@ -6,18 +6,19 @@ goNDK is a NOSTR Development Kit in Golang
 
 ### GOALS
 
-* well-engineered framework of NOSTR types, funcs and interfaces
-* 95%+ test coverage, for rapid prototyping and production-ready solutions at scale
-* help NOSTR development in Go to be high-quality, fast, easy and fun
+- [x] well-engineered framework of NOSTR types, funcs and interfaces
+- [x] 95%+ test coverage, for rapid prototyping and production-ready solutions at scale
+- [ ] help NOSTR development in Go to be high-quality, fast, easy and fun
 
 ### STATUS
 
 * initial type build underway, commenced Easter 2024
 
 - [x] `Event{}`
-- [ ] `Identity{}` (WIP)
-- [ ] `Client{}`, stream events from relays, publish to relays
-- [ ] `Relay{}`, `Transport{}`, `ConnectionManager{}`, `EventFilter{}`, `Outbox{}`, `Inbox{}`
+- [ ] `Identity{}` WIP
+- [ ] `Client{}`, `RelayManager{}`, `Subscription{}`, `SubscriptionFilter{}`
+- [ ] `Relay{}`, `Transport{}`, `ClientManager{}`,
+- [ ] `Outbox{}`, `Inbox{}`
 
 ### DEVELOPMENT
 
