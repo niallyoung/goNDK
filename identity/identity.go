@@ -8,7 +8,7 @@ import (
 type Identity struct {
 	//Profile
 	Pubkey string
-	NPub   string
+	NPub   string // convenience, derived from Pubkey
 }
 
 func NewIdentity(pubkey string, npub string) Identity {
