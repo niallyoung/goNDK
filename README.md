@@ -6,9 +6,9 @@ goNDK is a NOSTR Development Kit in Golang
 
 ### GOALS
 
-- [x] well-engineered framework of NOSTR types, funcs and interfaces
-- [x] 95%+ test coverage, for rapid prototyping and production-ready solutions at scale
-- [ ] help NOSTR development in Go to be high-quality, fast, easy and fun
+- well-engineered framework of NOSTR types, funcs and interfaces
+- 95%+ test coverage, for rapid prototyping and production-ready solutions at scale
+- help NOSTR development in Go to be high-quality, fast, easy and fun
 
 ### STATUS
 
@@ -16,7 +16,8 @@ goNDK is a NOSTR Development Kit in Golang
 
 - [x] `Event{}`
 - [ ] `Identity{}` WIP
-- [ ] `Client{}`, `RelayManager{}`, `Subscription{}`, `SubscriptionFilter{}`
+- [ ] `Client{}` WIP
+  - [ ] `RelayManager{}`, `Subscription{}`, `SubscriptionFilter{}`
 - [ ] `Relay{}`, `Transport{}`, `ClientManager{}`,
 - [ ] `Outbox{}`, `Inbox{}`
 
@@ -76,13 +77,25 @@ i := identity.NewIdentity(pubkey, npub)
 err := i.Validate()
 ```
 
+### Client{}
+
+```go
+import (
+	"github.com/niallyoung/goNDK/client"
+)
+
+c := client.NewClient()
+err := c.Validate()
+```
+
 ### THANKS
 
-Built upon, around and inspired by:
+Engineered upon, around and inspired by:
 
 * [go-nostr](https://github.com/nbd-wtf/go-nostr)
 * [khatru](https://github.com/fiatjaf/khatru)
 * [nostr-domain](https://github.com/dextryz/nostr-domain)
+* [go-nostr (client)](https://github.com/shota3506/go-nostr)
 
 MIT License
 Copyright (c) 2024 Niall Young <5465765+niallyoung@users.noreply.github.com>
