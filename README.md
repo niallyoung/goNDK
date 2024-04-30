@@ -16,8 +16,8 @@ goNDK is a NOSTR Development Kit in Golang
 
 - [x] `Event{}`
 - [ ] `Identity{}` WIP
-- [ ] `Client{}` WIP
-  - [ ] `RelayManager{}`, `Subscription{}`, `SubscriptionFilter{}`
+- [ ] `Client{}`, `RelayManager{}` WIP
+  - [ ] `Subscription{}`, `SubscriptionFilter{}`
 - [ ] `Relay{}`, `Transport{}`, `ClientManager{}`,
 - [ ] `Outbox{}`, `Inbox{}`
 
