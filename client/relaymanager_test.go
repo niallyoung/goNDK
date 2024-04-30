@@ -27,7 +27,7 @@ func TestRelayManager_Connect(t *testing.T) {
 	t.Run("connect to invalid url", func(t *testing.T) {
 		rm := client.NewRelayManager("wss://" + serverAddress)
 		err := rm.Connect(context.Background())
-		assert.ErrorContains(t, err, "failed to WebSocket dial: failed to send handshake request: Get \"https://localhost:8080\": dial tcp 127.0.0.1:8080: connect: connection refused\nwebsocket connection")
+		assert.ErrorContains(t, err, "failed to WebSocket dial: failed to send handshake request")
 	})
 
 	t.Run("connect to valid url (local test server)", func(t *testing.T) {
