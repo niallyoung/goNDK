@@ -8,18 +8,23 @@ goNDK is a NOSTR Development Kit in Golang
 
 - well-engineered framework of NOSTR types, funcs and interfaces
 - 95%+ test coverage, for rapid prototyping and production-ready solutions at scale
-- help NOSTR development in Go to be high-quality, fast, easy and fun
+- ensure the NOSTR development experience in Go is high-quality, productive, easy and fun
 
 ### STATUS
 
-* initial type build underway, commenced Easter 2024
+* initial `v0.0.x` Type build-out underway, commenced Easter 2024
+* total test coverage = 96.97%+ (see `./.meta/cover.sh`)
 
 - [x] `Event{}`
-- [ ] `Identity{}` WIP
-- [ ] `Client{}`, `RelayManager{}` WIP
+- [x] `Identity{}` **WIP**
+- [x] `Client{}`, `RelayManager{}` **WIP**
   - [ ] `Subscription{}`, `SubscriptionFilter{}`
 - [ ] `Relay{}`, `Transport{}`, `ClientManager{}`,
-- [ ] `Outbox{}`, `Inbox{}`
+  - [ ] `Outbox{}`, `Inbox{}`
+
+* ETA: ~Jul/Aug 2024?: functional `Client{}` publishing to `Relay{}` with network propagation
+  * all types standalone and de-coupled
+  * interfaces established, all types injected, all messages via interfaces
 
 ### DEVELOPMENT
 
