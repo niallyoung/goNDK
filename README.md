@@ -95,7 +95,7 @@ err := c.Validate()
 
 ### THANKS
 
-Engineered upon, around and inspired by:
+Built upon, around and inspired by:
 
 * [go-nostr](https://github.com/nbd-wtf/go-nostr)
 * [khatru](https://github.com/fiatjaf/khatru)
