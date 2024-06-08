@@ -31,7 +31,7 @@ func TestRelayManager_Connect(t *testing.T) {
 		assert.ErrorContains(t, err, "failed to WebSocket dial: failed to send handshake request")
 	})
 
-	t.Run("connect to valid url)", func(t *testing.T) {
+	t.Run("connect to valid url", func(t *testing.T) {
 		_ = server()
 		rm := client.NewRelayManager("ws://" + serverAddress)
 		err := rm.Connect(context.Background())

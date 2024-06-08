@@ -22,9 +22,9 @@ goNDK is a NOSTR Development Kit in Golang
 - [ ] `Relay{}`, `Transport{}`, `ClientManager{}`,
   - [ ] `Outbox{}`, `Inbox{}`
 
-* ETA: ~Jul/Aug 2024?: functional `Client{}` publishing to `Relay{}` with network propagation
-  * all types standalone and de-coupled
-  * interfaces established, all types injected, all messages via interfaces
+* ETA: ~Jul/Aug 2024?: functional `Client{}` publishing to `Relay{}` with successful downstream relay propagation
+  * cohesive types, moderately de-coupled
+  * interfaces established, all messages via interfaces, all dependencies injected
 
 ### Development
 
