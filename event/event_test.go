@@ -2,6 +2,7 @@ package event_test
 
 import (
 	"encoding/json"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -22,16 +23,28 @@ func TestNewEvent(t *testing.T) {
 }
 
 func TestEvent_MarshalJSON(t *testing.T) {
+	t.Run("marshal ValidEventJSON to Event{}", func(t *testing.T) {
+		var e event.Event
+		jsonBytes, err := json.Marshal(e)
+		assert.NoError(t, err)
+		assert.Equal(t, string(jsonBytes), event.Event{}.String())
+	})
+}
+
+func TestEvent_UnmarshalJSON(t *testing.T) {
 	t.Run("unmarshal ValidEventJSON to Event{}", func(t *testing.T) {
 		var e event.Event
 		err := json.Unmarshal([]byte(ValidEventJSON), &e)
 		assert.NoError(t, err)
+		assert.Equal(t, *ValidEvent(), e)
 	})
 
 	t.Run("unmarshal ValidEvent2JSON to Event{}", func(t *testing.T) {
 		var e event.Event
 		err := json.Unmarshal([]byte(ValidEvent2JSON), &e)
 		assert.NoError(t, err)
+		assert.Equal(t, event.Timestamp(1673311423), e.CreatedAt)
+		assert.True(t, strings.Contains(e.Content, "the magic"))
 	})
 }
 
