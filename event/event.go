@@ -6,7 +6,6 @@ import (
 	"github.com/btcsuite/btcd/btcec/v2/schnorr"
 	"github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
-	"github.com/mailru/easyjson"
 )
 
 // Eventer TODO what's a better name?
@@ -47,22 +46,13 @@ func NewEvent(kind int, content string, tags Tags, createdAt *int64, id *string,
 	}
 }
 
-// String implements Stringer interface, returns raw JSON as a string.
-func (e Event) String() string {
-	j, _ := easyjson.Marshal(e)
-	return string(j)
-}
-
 func (e Event) Validate() error {
 	if err := validation.ValidateStruct(&e,
 		validation.Field(&e.Kind, validation.Required),
 		validation.Field(&e.Content, validation.Required),
-		validation.Field(&e.Tags,
-			validation.When(e.Tags != nil, validation.Each(is.UTFLetterNumeric))),
-		validation.Field(&e.CreatedAt, validation.Required, validation.Min(0)), // time.Time.Unix()
-		validation.Field(&e.ID, // hex, sha256(event.Serialize())
-			validation.When(e.ID != nil, is.Hexadecimal, validation.Length(64, 64)),
-		),
+		validation.Field(&e.Tags, validation.When(e.Tags != nil, validation.Each(is.UTFLetterNumeric))),
+		validation.Field(&e.CreatedAt, validation.Required, validation.Min(0)),                           // time.Time.Unix()
+		validation.Field(&e.ID, validation.When(e.ID != nil, is.Hexadecimal, validation.Length(64, 64))), // hex, sha256(event.Serialize())
 		validation.Field(&e.Pubkey, // hex, secp256k1 schnorr public key derived from Sign(privatekey, ...)
 			validation.When(e.Pubkey != nil, is.Hexadecimal, validation.Length(64, 64)),
 		),

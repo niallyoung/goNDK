@@ -2,7 +2,15 @@ package event
 
 import (
 	"fmt"
+
+	"github.com/mailru/easyjson"
 )
+
+// String implements Stringer interface, returns raw JSON as a string.
+func (e Event) String() string {
+	j, _ := easyjson.Marshal(e)
+	return string(j)
+}
 
 // Serialize outputs a []byte JSON array of the Event
 func (e Event) Serialize() []byte {
