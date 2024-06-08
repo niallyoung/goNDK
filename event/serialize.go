@@ -6,6 +6,8 @@ import (
 	"github.com/mailru/easyjson"
 )
 
+// easyjson : See "Development" in README.md, and `make generate` in the Makefile
+
 // String implements Stringer interface, returns raw JSON as a string.
 func (e Event) String() string {
 	j, _ := easyjson.Marshal(e)

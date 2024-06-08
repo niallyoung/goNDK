@@ -4,13 +4,13 @@
 
 goNDK is a NOSTR Development Kit in Golang
 
-### GOALS
+### Goals
 
 - well-engineered framework of NOSTR types, funcs and interfaces
 - 95%+ test coverage, for rapid prototyping and production-ready solutions at scale
 - ensure the NOSTR development experience in Go is high-quality, productive, easy and fun
 
-### STATUS
+### Status
 
 * initial `v0.0.x` Type build-out underway, commenced Easter 2024
 * total test coverage = 96.97%+ (see `./.meta/cover.sh`)
@@ -26,13 +26,13 @@ goNDK is a NOSTR Development Kit in Golang
   * all types standalone and de-coupled
   * interfaces established, all types injected, all messages via interfaces
 
-### DEVELOPMENT
+### Development
 
 ```shell
 make lint     # golangci-lint
 make test     # unit tests
 make cover    # 95%+ coverage
-make generate # code generation (easyjson)
+make generate # code generation (event/event_easyjson.go)
 
 make docker.build
 make docker.lint
@@ -41,7 +41,7 @@ make docker.cover
 make docker.shell
 ```
 
-### USAGE
+### Usage
 
 ```shell
 go get github.com/niallyoung/goNDK@latest
