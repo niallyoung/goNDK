@@ -14,6 +14,7 @@ import (
 	"github.com/niallyoung/goNDK/client"
 )
 
+// TODO ENV injection, with a safer / random port
 const serverAddress = "localhost:8080"
 
 func TestNewRelayManager(t *testing.T) {
@@ -30,7 +31,7 @@ func TestRelayManager_Connect(t *testing.T) {
 		assert.ErrorContains(t, err, "failed to WebSocket dial: failed to send handshake request")
 	})
 
-	t.Run("connect to valid url (local test server)", func(t *testing.T) {
+	t.Run("connect to valid url)", func(t *testing.T) {
 		_ = server()
 		rm := client.NewRelayManager("ws://" + serverAddress)
 		err := rm.Connect(context.Background())
