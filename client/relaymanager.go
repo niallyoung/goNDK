@@ -8,6 +8,7 @@ import (
 	"math"
 	"sync"
 
+	"github.com/google/uuid"
 	"nhooyr.io/websocket"
 
 	"github.com/niallyoung/goNDK/event"
@@ -20,6 +21,8 @@ type RelayManager struct {
 	noticeChan chan string
 	subMap     sync.Map // map[string]*subChannelGroup
 	eventMap   sync.Map // map[string]*eventChannelGroup
+	closeOnce  sync.Once
+	closeErr   error
 }
 
 func NewRelayManager(url string) RelayManager {
@@ -57,6 +60,96 @@ func (rm *RelayManager) Connect(ctx context.Context) error {
 	}()
 
 	return nil
+}
+
+// Publish submits an event to the relay server and waits for the command result.
+func (rm RelayManager) Publish(ctx context.Context, event *event.Event) (*CommandResult, error) {
+	id := event.ID
+	okChan := make(chan *CommandResult, 1)
+
+	rm.eventMap.Store(id, &eventChannelGroup{
+		okChan: okChan,
+	})
+	defer rm.eventMap.Delete(id)
+
+	if err := rm.WriteMessage(ctx, &EventMessage{Event: event}); err != nil {
+		return nil, err
+	}
+
+	select {
+	case <-ctx.Done():
+		return nil, fmt.Errorf("missing command result: %w", ctx.Err())
+	case result := <-okChan:
+		return result, nil
+	}
+}
+
+// Subscribe creates a subscription to the relay server with the given filters.
+func (rm RelayManager) Subscribe(ctx context.Context, filters []Filter) (*Subscription, error) {
+	if len(filters) == 0 {
+		return nil, errors.New("at least one filter is required")
+	}
+
+	id := uuid.New().String()
+	eventChan := make(chan *event.Event)
+	eoseChan := make(chan struct{}, 1)
+
+	trigger := func(ctx context.Context) error {
+		// register subscription to client
+		rm.subMap.Store(id, &subChannelGroup{
+			eventChan: eventChan,
+			eoseChan:  eoseChan,
+		})
+
+		req := ReqMessage{
+			SubscriptionID: id,
+			Filters:        filters,
+		}
+		if err := rm.WriteMessage(ctx, &req); err != nil {
+			// unregister subscription from client
+			rm.subMap.Delete(id)
+			return err
+		}
+		return nil
+	}
+
+	closer := func(ctx context.Context) error {
+		req := CloseMessage{SubscriptionID: id}
+		if err := rm.WriteMessage(ctx, &req); err != nil {
+			return err
+		}
+
+		// unregister subscription from client
+		rm.subMap.Delete(id)
+		return nil
+	}
+
+	return &Subscription{
+		id:        id,
+		eventChan: eventChan,
+		eoseChan:  eoseChan,
+		trigger:   trigger,
+		closer:    closer,
+	}, nil
+}
+
+// Notice returns a channel that receives notice messages from the relay server.
+func (rm RelayManager) Notice() <-chan string {
+	return rm.noticeChan
+}
+
+// Close closes the client connection.
+func (rm RelayManager) Close() error {
+	rm.closeOnce.Do(func() {
+		close(rm.doneChan)
+
+		err := rm.conn.Close(websocket.StatusNormalClosure, "")
+		if err != nil {
+			rm.closeErr = err
+			return
+		}
+	})
+	return rm.closeErr
 }
 
 func (rm *RelayManager) WriteMessage(ctx context.Context, message json.Marshaler) error {
