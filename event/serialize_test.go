@@ -17,6 +17,6 @@ func TestEvent_Serialize(t *testing.T) {
 func TestEvent_String(t *testing.T) {
 	t.Run("given a valid Event, String() returns the expected string", func(t *testing.T) {
 		e := ValidEvent()
-		assert.Equal(t, ValidEventString, e.String())
+		assert.Equal(t, ValidEventJSON, e.String())
 	})
 }
