@@ -20,7 +20,7 @@ type RelayManager struct {
 	doneChan   chan struct{}
 	noticeChan chan string
 	subMap     sync.Map // map[string]*subscriptionChannelGroup // TODO shift off mutex
-	eventMap   sync.Map // map[string]*eventChannelGroup // TODO shift off mutex
+	eventMap   sync.Map // map[string]*eventChannelGroup        // TODO shift off mutex
 	closeOnce  sync.Once
 	closeErr   error
 }

@@ -1,4 +1,4 @@
-package client_test
+package client
 
 import (
 	"context"
@@ -11,28 +11,16 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/stretchr/testify/assert"
-
-	"github.com/niallyoung/goNDK/client"
 )
 
-func TestNewRelayManager(t *testing.T) {
-	t.Run("constructor", func(t *testing.T) {
-		rm := client.NewRelayManager("wss://localhost")
-		assert.NotNil(t, rm)
-	})
-}
-
-func TestRelayManager_Connect(t *testing.T) {
-	t.Run("connect to invalid url", func(t *testing.T) {
-		rm := client.NewRelayManager("wss://localhost:0")
-		err := rm.Connect(context.Background())
-		assert.ErrorContains(t, err, "failed to WebSocket dial: failed to send handshake request")
-	})
-
-	t.Run("connect to valid url", func(t *testing.T) {
+func TestRelayManager_Connect_doneChan(t *testing.T) {
+	t.Run("doneChan receive breaks out", func(t *testing.T) {
 		_, port := server()
-		rm := client.NewRelayManager("ws://" + "localhost:" + strconv.FormatInt(int64(port), 10))
+		rm := NewRelayManager("ws://" + "localhost:" + strconv.FormatInt(int64(port), 10))
 		err := rm.Connect(context.Background())
+		assert.NoError(t, err)
+		rm.doneChan <- struct{}{}
+		err = rm.Connect(context.Background())
 		assert.NoError(t, err)
 	})
 }
