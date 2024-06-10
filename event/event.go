@@ -46,7 +46,7 @@ func NewEvent(kind int, content string, tags Tags, createdAt *int64, id *string,
 	}
 }
 
-func (e Event) Validate() error {
+func (e *Event) Validate() error {
 	if err := validation.ValidateStruct(&e,
 		validation.Field(&e.Kind, validation.Required),
 		validation.Field(&e.Content, validation.Required),

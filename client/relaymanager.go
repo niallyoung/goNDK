@@ -19,14 +19,14 @@ type RelayManager struct {
 	conn       *websocket.Conn
 	doneChan   chan struct{}
 	noticeChan chan string
-	subMap     sync.Map // map[string]*subChannelGroup
-	eventMap   sync.Map // map[string]*eventChannelGroup
+	subMap     sync.Map // map[string]*subscriptionChannelGroup // TODO shift off mutex
+	eventMap   sync.Map // map[string]*eventChannelGroup // TODO shift off mutex
 	closeOnce  sync.Once
 	closeErr   error
 }
 
-func NewRelayManager(url string) RelayManager {
-	return RelayManager{
+func NewRelayManager(url string) *RelayManager {
+	return &RelayManager{
 		URL:        url,
 		conn:       nil,
 		doneChan:   make(chan struct{}),
@@ -41,7 +41,6 @@ func (rm *RelayManager) Connect(ctx context.Context) error {
 	}
 
 	conn.SetReadLimit(math.MaxInt64 - 1) // disable read limit
-
 	rm.conn = conn
 
 	go func() {
@@ -62,8 +61,17 @@ func (rm *RelayManager) Connect(ctx context.Context) error {
 	return nil
 }
 
+type CommandResult struct {
+	OK      bool
+	Message string
+}
+
+type eventChannelGroup struct {
+	okChan chan<- *CommandResult
+}
+
 // Publish submits an event to the relay server and waits for the command result.
-func (rm RelayManager) Publish(ctx context.Context, event *event.Event) (*CommandResult, error) {
+func (rm *RelayManager) Publish(ctx context.Context, event *event.Event) (*CommandResult, error) {
 	id := event.ID
 	okChan := make(chan *CommandResult, 1)
 
@@ -84,8 +92,13 @@ func (rm RelayManager) Publish(ctx context.Context, event *event.Event) (*Comman
 	}
 }
 
+type subscriptionChannelGroup struct {
+	eventChan chan<- *event.Event
+	eoseChan  chan<- struct{}
+}
+
 // Subscribe creates a subscription to the relay server with the given filters.
-func (rm RelayManager) Subscribe(ctx context.Context, filters []Filter) (*Subscription, error) {
+func (rm *RelayManager) Subscribe(_ context.Context, filters []Filter) (*Subscription, error) {
 	if len(filters) == 0 {
 		return nil, errors.New("at least one filter is required")
 	}
@@ -96,7 +109,7 @@ func (rm RelayManager) Subscribe(ctx context.Context, filters []Filter) (*Subscr
 
 	trigger := func(ctx context.Context) error {
 		// register subscription to client
-		rm.subMap.Store(id, &subChannelGroup{
+		rm.subMap.Store(id, &subscriptionChannelGroup{
 			eventChan: eventChan,
 			eoseChan:  eoseChan,
 		})
@@ -134,12 +147,12 @@ func (rm RelayManager) Subscribe(ctx context.Context, filters []Filter) (*Subscr
 }
 
 // Notice returns a channel that receives notice messages from the relay server.
-func (rm RelayManager) Notice() <-chan string {
+func (rm *RelayManager) Notice() <-chan string {
 	return rm.noticeChan
 }
 
 // Close closes the client connection.
-func (rm RelayManager) Close() error {
+func (rm *RelayManager) Close() error {
 	rm.closeOnce.Do(func() {
 		close(rm.doneChan)
 
@@ -194,7 +207,9 @@ func (rm *RelayManager) ReadMessage(ctx context.Context) error {
 		if err = json.Unmarshal(message[1], &m); err != nil {
 			return err
 		}
-		rm.handleNoticeMessage(&NoticeMessage{Message: m})
+		if err = rm.handleNoticeMessage(&NoticeMessage{Message: m}); err != nil {
+			return err
+		}
 		return nil
 
 	case string(MessageTypeEvent):
@@ -205,14 +220,16 @@ func (rm *RelayManager) ReadMessage(ctx context.Context) error {
 		if err = json.Unmarshal(message[1], &subID); err != nil {
 			return err
 		}
-		var event event.Event
-		if err = json.Unmarshal(message[2], &event); err != nil {
+		var e event.Event
+		if err = json.Unmarshal(message[2], &e); err != nil {
 			return err
 		}
-		rm.handleEventMessage(&EventMessage{
+		if err = rm.handleEventMessage(&EventMessage{
 			SubscriptionID: subID,
-			Event:          &event,
-		})
+			Event:          &e,
+		}); err != nil {
+			return err
+		}
 		return nil
 
 	case string(MessageTypeEOSE):
@@ -223,7 +240,9 @@ func (rm *RelayManager) ReadMessage(ctx context.Context) error {
 		if err = json.Unmarshal(message[1], &subID); err != nil {
 			return err
 		}
-		rm.handleEOSEMessage(&EOSEMessage{SubscriptionID: subID})
+		if err = rm.handleEOSEMessage(&EOSEMessage{SubscriptionID: subID}); err != nil {
+			return err
+		}
 		return nil
 
 	case string(MessageTypeOK):
@@ -242,11 +261,13 @@ func (rm *RelayManager) ReadMessage(ctx context.Context) error {
 		if err = json.Unmarshal(message[3], &m); err != nil {
 			return err
 		}
-		rm.handleOKMessage(&OKMessage{
+		if err = rm.handleOKMessage(&OKMessage{
 			EventID: eventID,
 			OK:      ok,
 			Message: m,
-		})
+		}); err != nil {
+			return err
+		}
 		return nil
 	}
 
@@ -267,9 +288,9 @@ func (rm *RelayManager) handleEventMessage(m *EventMessage) error {
 	if !ok {
 		return fmt.Errorf("unaddressed event message: subscription id: %s", m.SubscriptionID)
 	}
-	group, ok := value.(*subChannelGroup)
+	group, ok := value.(*subscriptionChannelGroup)
 	if !ok {
-		return errors.New("invalid value in subsciption map")
+		return errors.New("invalid value in subscription map")
 	}
 
 	select {
@@ -285,9 +306,9 @@ func (rm *RelayManager) handleEOSEMessage(m *EOSEMessage) error {
 	if !ok {
 		return fmt.Errorf("unaddressed EOSE message: subscription id: %s", m.SubscriptionID)
 	}
-	group, ok := value.(*subChannelGroup)
+	group, ok := value.(*subscriptionChannelGroup)
 	if !ok {
-		return errors.New("invalid value in subsciption map")
+		return errors.New("invalid value in subscription map")
 	}
 
 	select {
@@ -317,18 +338,4 @@ func (rm *RelayManager) handleOKMessage(m *OKMessage) error {
 		// drop message
 	}
 	return nil
-}
-
-type subChannelGroup struct {
-	eventChan chan<- *event.Event
-	eoseChan  chan<- struct{}
-}
-
-type eventChannelGroup struct {
-	okChan chan<- *CommandResult
-}
-
-type CommandResult struct {
-	OK      bool
-	Message string
 }

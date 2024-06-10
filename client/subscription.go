@@ -37,8 +37,8 @@ func (s *Subscription) Receive(ctx context.Context, f func(context.Context, *eve
 	outer:
 		for {
 			select {
-			case event := <-s.eventChan:
-				f(innerCtx, event)
+			case e := <-s.eventChan:
+				f(innerCtx, e)
 			case <-done:
 				break outer
 			}
@@ -53,7 +53,7 @@ func (s *Subscription) Receive(ctx context.Context, f func(context.Context, *eve
 		// use new context to close subscription
 		closeCtx, cancel := context.WithTimeout(context.Background(), time.Second)
 		defer cancel()
-		s.closer(closeCtx)
+		_ = s.closer(closeCtx)
 	}()
 
 	<-ctx.Done()
@@ -61,7 +61,7 @@ func (s *Subscription) Receive(ctx context.Context, f func(context.Context, *eve
 	return nil
 }
 
-// EOSE returns a channel that recieves a value at the end of stored events.
+// EOSE returns a channel that receives a value at the end of stored events.
 func (s *Subscription) EOSE() <-chan struct{} {
 	return s.eoseChan
 }

@@ -47,7 +47,7 @@ func server() *httptest.Server {
 	}
 
 	s := httptest.NewUnstartedServer(http.HandlerFunc(echo))
-	s.Listener.Close()
+	_ = s.Listener.Close()
 	s.Listener = l
 	s.Start()
 
@@ -61,7 +61,7 @@ func echo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	defer c.Close()
+	defer func() { _ = c.Close() }()
 
 	for {
 		mt, message, err := c.ReadMessage()

@@ -15,7 +15,7 @@ func NewClient(urls ...string) Client {
 	}
 
 	for _, url := range urls {
-		client.RelayManager[url] = NewRelayManager(url)
+		client.RelayManager[url] = *NewRelayManager(url)
 	}
 
 	return client
