@@ -13,6 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/niallyoung/goNDK/client"
+	"github.com/niallyoung/goNDK/event"
 )
 
 func TestNewRelayManager(t *testing.T) {
@@ -33,6 +34,16 @@ func TestRelayManager_Connect(t *testing.T) {
 		_, port := server()
 		rm := client.NewRelayManager("ws://" + "localhost:" + strconv.FormatInt(int64(port), 10))
 		err := rm.Connect(context.Background())
+		assert.NoError(t, err)
+	})
+
+	t.Run("ReadMessage() error during Connect", func(t *testing.T) {
+		_, port := server()
+		rm := client.NewRelayManager("ws://" + "localhost:" + strconv.FormatInt(int64(port), 10))
+		err := rm.Connect(context.Background())
+		assert.NoError(t, err)
+		err = rm.WriteMessage(context.Background(), event.Event{})
+		err = rm.Connect(context.Background())
 		assert.NoError(t, err)
 	})
 }
