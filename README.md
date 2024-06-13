@@ -7,31 +7,38 @@ goNDK is a NOSTR Development Kit in Golang
 ## Goals
 
 - well-engineered framework of NOSTR types, funcs and interfaces
-- 95%+ test coverage, for rapid prototyping and production-ready solutions at scale
-- ensure the NOSTR development experience in Go is high-quality, productive, easy and fun
+- 95%+ unit & integration test coverage
+- useful and valuable to a wide audience, from rapid prototyping to production-ready solutions at scale
+- facilitate NIP experimentation, help define and maintain interoperability, build for the long-term
+- ensure the NOSTR development experience in Go is high-quality, productive, flexible, easy and fun
 
 ## Status
 
 * initial `v0.0.x` Type build-out underway, commenced Easter 2024
 * total unit test coverage = 96.97%+ (see `./.meta/cover.sh`)
+* integration tests pending stable interfaces, after types established
+* v0.1.0 release should actually work
 
 - [x] `Event{}`
 - [x] `Identity{}` **WIP**
-  - [ ] NWC / Keystore integration
+  - [ ] `IdentityProvider{}`? NWC / Keystore integration
 - [x] `Client{}`, `RelayManager{}` **WIP**
   - [ ] `Subscription{}`, `SubscriptionFilter{}`
+  - [ ] `CommandlineClient{}`, ...
+- [ ] `*Config{}`
 - [ ] `Relay{}`, `Transport{}`, `ClientManager{}`,
   - [ ] `Outbox{}`, `Inbox{}`
+  - [ ] `LocalRelay{}`, `ProxyRelay{}`, `CommandlineRelay{}`, ...
 
-~v0.1.0 ETA: ~Jul/Aug 2024: functional `Client{}`
+~v0.1.0 ETA: ~Jul/Aug 2024: functional `Client{}` publishing `Event{}`s
   * cohesive types, moderately de-coupled
-  * interfaces established, all messages via interfaces
-  * publishing to a public relay with successful downstream relay propagation
+  * interfaces established, all messaging via interfaces
+  * publishing to a public relay with successful downstream propagation
 
 ~v0.2.0 ETA: ~Sep/Oct 2024: functional `Relay{}`
   * all dependencies injected, optional adapters to shim to interfaces
-  * mocks covering all interfaces, refactor unit tests with injection
-  * `Client{}` publishing to `Relay{}` with successful downstream relay propagation
+  * mocks generated from all interfaces, refactor unit tests with injection
+  * `Client{}` publishing to `Relay{}` with successful downstream propagation
 
 ## Development
 
@@ -80,6 +87,34 @@ err := e.Validate()
 ok, err := e.ValidateSignature()
 ```
 
+### Client{}
+
+```go
+import (
+	"github.com/niallyoung/goNDK/client"
+)
+
+c := client.NewClient()
+err := c.Validate()
+```
+
+### RelayManager{}
+
+```go
+import (
+	"github.com/niallyoung/goNDK/client"
+)
+
+c := client.NewRelayManager(url)
+err := c.Connect()
+sub, err := c.Subscribe(ctx, filters)
+
+res, err := c.Publish(ctx, event)
+
+err := c.WriteMessage(ctx, message)
+err := c.ReadMessage(ctx)
+```
+
 ### Identity{}
 
 ```go
@@ -91,16 +126,7 @@ i := identity.NewIdentity(pubkey, npub)
 err := i.Validate()
 ```
 
-### Client{}
 
-```go
-import (
-	"github.com/niallyoung/goNDK/client"
-)
-
-c := client.NewClient()
-err := c.Validate()
-```
 
 ## Thanks
 
