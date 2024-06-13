@@ -4,13 +4,13 @@
 
 goNDK is a NOSTR Development Kit in Golang
 
-### Goals
+## Goals
 
 - well-engineered framework of NOSTR types, funcs and interfaces
 - 95%+ test coverage, for rapid prototyping and production-ready solutions at scale
 - ensure the NOSTR development experience in Go is high-quality, productive, easy and fun
 
-### Status
+## Status
 
 * initial `v0.0.x` Type build-out underway, commenced Easter 2024
 * total test coverage = 96.97%+ (see `./.meta/cover.sh`)
@@ -22,11 +22,17 @@ goNDK is a NOSTR Development Kit in Golang
 - [ ] `Relay{}`, `Transport{}`, `ClientManager{}`,
   - [ ] `Outbox{}`, `Inbox{}`
 
-* ETA: ~Jul/Aug 2024?: functional `Client{}` publishing to `Relay{}` with successful downstream relay propagation
+~v0.1.0 ETA: ~Jul/Aug 2024: functional `Client{}`
+  * publishing to a public relay with successful downstream relay propagation:
   * cohesive types, moderately de-coupled
-  * interfaces established, all messages via interfaces, all dependencies injected
+  * interfaces established, all messages via interfaces
 
-### Development
+~v0.2.0 ETA: ~Sep/Oct 2024: functional `Relay{}`
+  * publishing to `Relay{}` with successful downstream relay propagation:
+  * all dependencies injected, optional adapters to shim to interfaces
+  * mocks covering all interfaces, refactor unit tests with injection
+
+## Development
 
 ```shell
 make lint     # golangci-lint
@@ -41,10 +47,12 @@ make docker.cover
 make docker.shell
 ```
 
-### Usage
+## Usage
+
+### Installation
 
 ```shell
-go get github.com/niallyoung/goNDK@latest
+go get github.com/niallyoung/goNDK
 ```
 
 ### Event{}
@@ -93,14 +101,16 @@ c := client.NewClient()
 err := c.Validate()
 ```
 
-### THANKS
+## Thanks
 
 Built upon, around and inspired by:
 
-* [go-nostr](https://github.com/nbd-wtf/go-nostr)
 * [khatru](https://github.com/fiatjaf/khatru)
+* [go-nostr](https://github.com/nbd-wtf/go-nostr)
+* [shota3506/go-nostr (client)](https://github.com/shota3506/go-nostr)
 * [nostr-domain](https://github.com/dextryz/nostr-domain)
-* [go-nostr (client)](https://github.com/shota3506/go-nostr)
+
+## License
 
 MIT License
 Copyright (c) 2024 Niall Young <5465765+niallyoung@users.noreply.github.com>
