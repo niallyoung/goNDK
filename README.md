@@ -13,24 +13,25 @@ goNDK is a NOSTR Development Kit in Golang
 ## Status
 
 * initial `v0.0.x` Type build-out underway, commenced Easter 2024
-* total test coverage = 96.97%+ (see `./.meta/cover.sh`)
+* total unit test coverage = 96.97%+ (see `./.meta/cover.sh`)
 
 - [x] `Event{}`
 - [x] `Identity{}` **WIP**
+  - [ ] NWC / Keystore integration
 - [x] `Client{}`, `RelayManager{}` **WIP**
   - [ ] `Subscription{}`, `SubscriptionFilter{}`
 - [ ] `Relay{}`, `Transport{}`, `ClientManager{}`,
   - [ ] `Outbox{}`, `Inbox{}`
 
 ~v0.1.0 ETA: ~Jul/Aug 2024: functional `Client{}`
-  * publishing to a public relay with successful downstream relay propagation:
   * cohesive types, moderately de-coupled
   * interfaces established, all messages via interfaces
+  * publishing to a public relay with successful downstream relay propagation
 
 ~v0.2.0 ETA: ~Sep/Oct 2024: functional `Relay{}`
-  * publishing to `Relay{}` with successful downstream relay propagation:
   * all dependencies injected, optional adapters to shim to interfaces
   * mocks covering all interfaces, refactor unit tests with injection
+  * `Client{}` publishing to `Relay{}` with successful downstream relay propagation
 
 ## Development
 
