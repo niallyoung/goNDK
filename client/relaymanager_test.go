@@ -2,14 +2,17 @@ package client_test
 
 import (
 	"context"
+	"log"
+	"net"
 	"net/http"
+	"net/http/httptest"
+	"strconv"
 	"testing"
 
 	"github.com/gorilla/websocket"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/niallyoung/goNDK/client"
-	"github.com/niallyoung/goNDK/client/test"
 	"github.com/niallyoung/goNDK/event"
 )
 
@@ -28,14 +31,14 @@ func TestRelayManager_Connect(t *testing.T) {
 	})
 
 	t.Run("connect to valid url", func(t *testing.T) {
-		_, port := test.FakeRelay(echo)
+		_, port := FakeRelay(Echo)
 		rm := client.NewRelayManager("ws://localhost:" + port)
 		err := rm.Connect(context.Background())
 		assert.NoError(t, err)
 	})
 
 	t.Run("ReadMessage() error during Connect", func(t *testing.T) {
-		_, port := test.FakeRelay(echo)
+		_, port := FakeRelay(Echo)
 		rm := client.NewRelayManager("ws://localhost:" + port)
 		err := rm.Connect(context.Background())
 		assert.NoError(t, err)
@@ -45,7 +48,25 @@ func TestRelayManager_Connect(t *testing.T) {
 	})
 }
 
-func echo(w http.ResponseWriter, r *http.Request) {
+func FakeRelay(f http.HandlerFunc) (*httptest.Server, string) {
+	// custom listener to start up on a random port
+	l, err := net.Listen("tcp", ":0")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	s := httptest.NewUnstartedServer(f)
+	_ = s.Listener.Close()
+	s.Listener = l
+	s.Start()
+
+	port := l.Addr().(*net.TCPAddr).Port
+	portString := strconv.FormatInt(int64(port), 10)
+
+	return s, portString
+}
+
+func Echo(w http.ResponseWriter, r *http.Request) {
 	var upgrader = websocket.Upgrader{}
 	c, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
