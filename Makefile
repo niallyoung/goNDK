@@ -1,4 +1,4 @@
-SHELL:=/bin/bash
+SuELL:=/bin/bash
 
 NAME:=goNDK
 HASH:=$(shell git rev-parse --short HEAD)
@@ -13,12 +13,12 @@ clean:
 
 generate:
 	@echo "######## make generate"
-	go run github.com/mailru/easyjson/easyjson -all event/event.go
+	go run github.com/mailru/easyjson/easyjson@v0.7.7 -all event/event.go
 .PHONY: generate
 
 lint:
 	@echo "######## make lint"
-	go run github.com/golangci/golangci-lint/cmd/golangci-lint run --timeout=5m ./... | tee lint.out
+	go run github.com/golangci/golangci-lint/cmd/golangci-lint@v1.59.0 run --timeout=5m ./... | tee lint.out
 .PHONY: lint
 
 test:
