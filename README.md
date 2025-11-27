@@ -7,8 +7,11 @@ A NOSTR Development Kit in Go - well-engineered, production-ready, and easy to u
 ## Features
 
 - ✅ **Event** - Create, sign, and validate NOSTR events (NIP-01)
-- ✅ **Identity** - Manage NOSTR identities (npub/nsec)
+- ✅ **Identity** - Manage NOSTR identities (npub/nsec, NIP-19)
 - ✅ **Client** - Connect to relays, publish events, subscribe to filters
+- ✅ **NIP-44** - Encryption/decryption
+- ✅ **NIP-59** - Gift wrap envelopes
+- ✅ **CLI Tool** - Send/receive encrypted messages and files
 - ✅ **81.95% test coverage** - Thoroughly tested and reliable
 
 ## Installation
@@ -49,7 +52,23 @@ e := event.NewEvent(1, "Hello NOSTR!", nil, nil, nil, nil, nil)
 err := e.Sign(privateKeyHex)
 ```
 
-See `examples/client/` for complete working examples.
+### Send Encrypted Messages (Gift Wrap)
+
+```go
+import "github.com/niallyoung/goNDK/nips/nip59"
+
+// Create inner event
+innerEvent := event.NewEvent(1, "Secret message", nil, nil, nil, &senderPubKey, nil)
+innerEvent.Sign(senderPrivKey)
+
+// Wrap and encrypt
+wrapped, _ := nip59.Wrap(innerEvent, senderPrivKey, recipientPubKey)
+
+// Publish
+rm.Publish(ctx, wrapped)
+```
+
+See `examples/client/` and `examples/client-giftwrap/` for complete working examples.
 
 ## Development
 
