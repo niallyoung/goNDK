@@ -3,5 +3,5 @@
 coverage.out*
 lint.out
 # Binaries
-identity-generator
-giftwrap
+examples/identity-generator/identity-generator
+examples/client-giftwrap/giftwrap
