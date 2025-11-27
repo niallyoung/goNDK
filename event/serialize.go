@@ -2,10 +2,20 @@ package event
 
 import (
 	"fmt"
+
+	"github.com/mailru/easyjson"
 )
 
+// easyjson : See "Development" in README.md, and `make generate` in the Makefile
+
+// String implements Stringer interface, returns raw JSON as a string.
+func (e *Event) String() string {
+	j, _ := easyjson.Marshal(e)
+	return string(j)
+}
+
 // Serialize outputs a []byte JSON array of the Event
-func (e Event) Serialize() []byte {
+func (e *Event) Serialize() []byte {
 	dst := make([]byte, 0)
 
 	// header
@@ -52,7 +62,7 @@ func escapeString(dst []byte, s string) []byte {
 			dst = append(dst, []byte{'\\', 'u', '0', '0', '0', 0x57 + c}...)
 		case c < 0x1a: // (< substitute)
 			dst = append(dst, []byte{'\\', 'u', '0', '0', '1', 0x20 + c}...)
-		case c < 0x20: // (< space)
+		case c < 0x20: // (< space) - default (always true)
 			dst = append(dst, []byte{'\\', 'u', '0', '0', '1', 0x47 + c}...)
 		}
 	}

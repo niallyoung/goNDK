@@ -38,7 +38,7 @@ func (e *Event) Sign(privateKey string, signOpts ...schnorr.SignOption) error {
 }
 
 // ValidateSignature checks if the signature is valid for the id.
-func (e Event) ValidateSignature() (bool, error) {
+func (e *Event) ValidateSignature() (bool, error) {
 	if e.Pubkey == nil || e.Sig == nil || e.ID == nil {
 		return false, errors.New("unsigned event")
 	}

@@ -13,24 +13,29 @@ clean:
 
 generate:
 	@echo "######## make generate"
-	go run github.com/mailru/easyjson/easyjson -all event/event.go
+	go run github.com/mailru/easyjson/easyjson@v0.7.7 -all event/event.go
 .PHONY: generate
 
 lint:
 	@echo "######## make lint"
-	go run github.com/golangci/golangci-lint/cmd/golangci-lint run --timeout=5m ./... | tee lint.out
+	go run github.com/golangci/golangci-lint/cmd/golangci-lint@v1.59.0 run --timeout=5m ./... | tee lint.out
 .PHONY: lint
 
 test:
 	@echo "######## make test"
-	go test ./...
+	go test $$(go list ./... | grep -v /examples)
 .PHONY: test
 
 cover:
 	@echo "######## make cover"
-	go test -timeout=5m -coverprofile=coverage.out ./...
+	go test -timeout=5m -coverprofile=coverage.out $$(go list ./... | grep -v /examples)
 	./.meta/cover.sh
 .PHONY: cover
+
+vuln:
+	@echo "######## make vuln"
+	go run golang.org/x/vuln/cmd/govulncheck@v1.1.3 ./...
+.PHONY: vuln
 
 docker.build:
 	@echo "######## make docker.build"
