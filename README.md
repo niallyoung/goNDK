@@ -16,8 +16,18 @@ A NOSTR Development Kit in Go - well-engineered, production-ready, and easy to u
 
 ## Installation
 
+### Library
+
 ```shell
 go get github.com/niallyoung/goNDK
+```
+
+### CLI Tool
+
+```shell
+cd examples/client-giftwrap
+make build
+make install  # Copies to ~/bin/giftwrap
 ```
 
 ## Quick Start
