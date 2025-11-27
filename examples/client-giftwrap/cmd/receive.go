@@ -57,12 +57,14 @@ func runReceive(cmd *cobra.Command, args []string) error {
 }
 
 func fetchAndDecrypt(ctx context.Context, privKey, eventID string) error {
+	fmt.Fprintf(os.Stderr, "🔌 Connecting to %s...\n", relay)
 	rm := client.NewRelayManager(relay)
 	if err := rm.Connect(ctx); err != nil {
 		return fmt.Errorf("connect to relay: %w", err)
 	}
 	defer rm.Close()
 
+	fmt.Fprintf(os.Stderr, "🔍 Fetching event %s...\n", eventID)
 	ev, err := client.FetchEventByID(ctx, rm, eventID)
 	if err != nil {
 		return fmt.Errorf("fetch event: %w", err)
@@ -72,11 +74,13 @@ func fetchAndDecrypt(ctx context.Context, privKey, eventID string) error {
 }
 
 func watchMessages(ctx context.Context, recipientID *identity.ExtendedIdentity) error {
+	fmt.Fprintf(os.Stderr, "🔌 Connecting to %s...\n", relay)
 	rm := client.NewRelayManager(relay)
 	if err := rm.Connect(ctx); err != nil {
 		return fmt.Errorf("connect to relay: %w", err)
 	}
 	defer rm.Close()
+	fmt.Fprintf(os.Stderr, "✓ Connected\n")
 
 	filter := client.Filter{
 		Kinds: []int{1059},

@@ -42,10 +42,12 @@ func runSend(cmd *cobra.Command, args []string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
+	fmt.Fprintf(os.Stderr, "🔑 Loading key from %s...\n", keyPath)
 	senderID, err := internal.LoadOrGenerateKey(keyPath)
 	if err != nil {
 		return fmt.Errorf("load key: %w", err)
 	}
+	fmt.Fprintf(os.Stderr, "✓ Using identity: %s\n", senderID.NPub)
 
 	recipientPubKey, err := identity.NpubToHex(destination)
 	if err != nil {
@@ -63,7 +65,8 @@ func runSend(cmd *cobra.Command, args []string) error {
 		if filename == "" {
 			filename = "file.bin"
 		}
-		msg = internal.EncodeFileMessage(data, filename, "application/octet-stream")
+		mimeType := internal.DetectMimeType(filename, data)
+		msg = internal.EncodeFileMessage(data, filename, mimeType)
 	}
 
 	content, err := internal.EncodeMessageJSON(msg)
@@ -81,12 +84,15 @@ func runSend(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("wrap message: %w", err)
 	}
 
+	fmt.Fprintf(os.Stderr, "🔌 Connecting to %s...\n", relay)
 	rm := client.NewRelayManager(relay)
 	if err := rm.Connect(ctx); err != nil {
 		return fmt.Errorf("connect to relay: %w", err)
 	}
 	defer rm.Close()
+	fmt.Fprintf(os.Stderr, "✓ Connected\n")
 
+	fmt.Fprintf(os.Stderr, "📤 Publishing...\n")
 	if _, err := rm.Publish(ctx, wrapped); err != nil {
 		return fmt.Errorf("publish event: %w", err)
 	}
