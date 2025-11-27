@@ -23,12 +23,12 @@ lint:
 
 test:
 	@echo "######## make test"
-	go test ./...
+	go test $$(go list ./... | grep -v /examples)
 .PHONY: test
 
 cover:
 	@echo "######## make cover"
-	go test -timeout=5m -coverprofile=coverage.out ./...
+	go test -timeout=5m -coverprofile=coverage.out $$(go list ./... | grep -v /examples)
 	./.meta/cover.sh
 .PHONY: cover
 
