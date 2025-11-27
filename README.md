@@ -14,31 +14,37 @@ goNDK is a NOSTR Development Kit in Golang
 
 ## Status
 
-* initial `v0.0.x` Type build-out underway, commenced Easter 2024
-* total unit test coverage = 96.97%+ (see `./.meta/cover.sh`)
-* integration tests pending stable interfaces, after types established
-* v0.1.0 release should actually work
+* `initial_client` branch: Client + RelayManager complete
+* total unit test coverage = 68%+ (see `./.meta/cover.sh`)
+* ready for merge to main
+* v0.1.0 release target: functional relay client
 
-- [x] `Event{}`
-- [x] `Identity{}` **WIP**
-  - [ ] `IdentityProvider{}`? NWC / Keystore integration
-- [x] `Client{}`, `RelayManager{}` **WIP**
-  - [ ] `Subscription{}`, `SubscriptionFilter{}`
-  - [ ] `CommandlineClient{}`, ...
-- [ ] `*Config{}`
-- [ ] `Relay{}`, `Transport{}`, `ClientManager{}`,
-  - [ ] `Outbox{}`, `Inbox{}`
-  - [ ] `LocalRelay{}`, `ProxyRelay{}`, `CommandlineRelay{}`, ...
+- [x] `Event{}` - 83.3% coverage
+- [x] `Identity{}` - 100% coverage
+- [x] `Client{}`, `RelayManager{}` - 68.2% coverage
+  - [x] `Subscription{}`, `Filter{}`
+  - [x] WebSocket connection management
+  - [x] Event publishing
+  - [x] Subscription with filters
+  - [x] Message handling (EVENT, REQ, CLOSE, EOSE, OK, NOTICE)
+  - [ ] Retry/reconnection logic
+  - [ ] Connection pooling
+- [ ] `Relay{}` - Future
+  - [ ] `LocalRelay{}`, `ProxyRelay{}`, etc.
 
-~v0.1.0 ETA: ~Jul/Aug 2024: functional `Client{}` publishing `Event{}`s
-  * cohesive types, moderately de-coupled
-  * interfaces established, all messaging via interfaces
-  * publishing to a public relay with successful downstream propagation
+~v0.1.0 ETA: Q1 2025: functional `Client{}` + `RelayManager{}`
+  * ✅ Event creation and signing
+  * ✅ WebSocket relay connections
+  * ✅ Event publishing
+  * ✅ Subscriptions with filters
+  * ✅ 68%+ test coverage
+  * ⏳ Merge initial_client → main
 
-~v0.2.0 ETA: ~Sep/Oct 2024: functional `Relay{}`
-  * all dependencies injected, optional adapters to shim to interfaces
-  * mocks generated from all interfaces, refactor unit tests with injection
-  * `Client{}` publishing to `Relay{}` with successful downstream propagation
+~v0.2.0 ETA: Q2 2025: Enhanced client features
+  * Retry/reconnection logic
+  * Connection pooling
+  * Rate limiting
+  * 80%+ test coverage
 
 ## Development
 

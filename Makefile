@@ -1,4 +1,4 @@
-SuELL:=/bin/bash
+SHELL:=/bin/bash
 
 NAME:=goNDK
 HASH:=$(shell git rev-parse --short HEAD)
