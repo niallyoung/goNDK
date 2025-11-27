@@ -12,6 +12,8 @@ var rootCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(sendCmd)
 	rootCmd.AddCommand(receiveCmd)
+	rootCmd.AddCommand(identityCmd)
+	rootCmd.AddCommand(createCmd)
 }
 
 func Execute() error {

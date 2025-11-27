@@ -78,6 +78,22 @@ wrapped, _ := nip59.Wrap(innerEvent, senderPrivKey, recipientPubKey)
 rm.Publish(ctx, wrapped)
 ```
 
+### Real-World Example
+
+Successfully sent encrypted message to jb55 using the CLI:
+
+```bash
+cd examples/client-giftwrap
+make build
+
+./giftwrap send \
+  --destination npub1xtscya34g58tk0z605fvr788k263gsu6cy9x0mhnm87echrgufzsevkk5s \
+  --message "successful vibed gift-wrap for you bro, see more at https://github.com/niallyoung/goNDK" \
+  --relay wss://relay.damus.io
+```
+
+This NIP-59 gift-wrapped event was published to relay.damus.io and can only be decrypted by jb55.
+
 See `examples/client/` and `examples/client-giftwrap/` for complete working examples.
 
 ## Development
@@ -90,7 +106,7 @@ make lint     # Lint code
 
 ## Status
 
-**v0.0.9** - Relay client with subscriptions, publishing, and comprehensive test coverage.
+**v0.1.0** - Complete NOSTR toolkit with relay client, encryption (NIP-44), gift wrap (NIP-59), and CLI tool for encrypted messaging.
 
 See [TODO.md](TODO.md) for roadmap and [CHANGELOG.md](CHANGELOG.md) for release history.
 

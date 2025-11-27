@@ -85,6 +85,27 @@ Message → JSON → Inner Event → Sign → NIP-44 Encrypt → Gift Wrap → R
 
 ## Examples
 
+### Real-World Example
+
+Successfully sent encrypted message to jb55 on relay.damus.io:
+
+```bash
+./giftwrap send \
+  --destination npub1xtscya34g58tk0z605fvr788k263gsu6cy9x0mhnm87echrgufzsevkk5s \
+  --message "successful vibed gift-wrap for you bro, see more at https://github.com/niallyoung/goNDK" \
+  --relay wss://relay.damus.io
+
+# Output:
+# 🔑 Loading key...
+# ✓ Using identity: npub1hpe6yarmdqzcfskjac37ttnswz28wx2uh4txww7dskraa7974k7q0kt06y
+# 🔌 Connecting to wss://relay.damus.io...
+# ✓ Connected
+# 📤 Publishing...
+# ✅ Message sent to relay!
+```
+
+This NIP-59 gift-wrapped event was published to relay.damus.io and can only be decrypted by jb55.
+
 ### Send secret message
 ```bash
 ./giftwrap send -d npub1alice... -m "Meet at noon"

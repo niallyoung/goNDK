@@ -115,7 +115,11 @@ func readFromStdin(privKey string) error {
 }
 
 func decryptAndDisplay(ev *event.Event, privKey string) error {
-	innerEvent, err := nip59.Unwrap(ev, privKey, "")
+	senderPubKey := ""
+	if ev.Pubkey != nil {
+		senderPubKey = *ev.Pubkey
+	}
+	innerEvent, err := nip59.Unwrap(ev, privKey, senderPubKey)
 	if err != nil {
 		return fmt.Errorf("unwrap: %w", err)
 	}
