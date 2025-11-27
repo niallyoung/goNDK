@@ -1,5 +1,32 @@
 # CHANGELOG
 
+## [v0.0.9](https://github.com/niallyoung/goNDK/tree/v0.0.9) (2025-01-27)
+
+[Full Changelog](https://github.com/niallyoung/goNDK/compare/v0.0.8...v0.0.9)
+
+**Major Features:**
+- Full relay client implementation (Client, RelayManager, Subscription)
+- WebSocket connection management
+- Event publishing and subscription with filters
+- All NIP-01 message types (EVENT, REQ, CLOSE, EOSE, OK, NOTICE)
+- Integration tests with 4 public relays
+- Working examples in `examples/client/`
+
+**Test Coverage:**
+- Overall: 81.95% (was ~80%)
+- client: 74.9%
+- event: 83.3%
+- identity: 100%
+
+**Changes:**
+- Add RelayManager for relay connections
+- Add Subscription with filter support
+- Add message types (EventMessage, ReqMessage, CloseMessage, etc.)
+- Add integration tests against public relays
+- Add examples (fetch_events.go, test_multiple_relays.go)
+- Fix Makefile to exclude examples from tests
+- Comprehensive unit tests for error paths
+
 ## [v0.0.8](https://github.com/niallyoung/goNDK/tree/v0.0.8) (2024-04-21)
 
 [Full Changelog](https://github.com/niallyoung/goNDK/compare/v0.0.7...v0.0.8)
