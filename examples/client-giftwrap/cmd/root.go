@@ -14,6 +14,7 @@ func init() {
 	rootCmd.AddCommand(receiveCmd)
 	rootCmd.AddCommand(identityCmd)
 	rootCmd.AddCommand(createCmd)
+	rootCmd.AddCommand(queryCmd)
 }
 
 func Execute() error {
