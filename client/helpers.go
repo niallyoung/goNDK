@@ -22,6 +22,11 @@ func FetchEventByID(ctx context.Context, rm *RelayManager, eventID string) (*eve
 		return nil, err
 	}
 
+	// Trigger the subscription to send REQ
+	if err := sub.trigger(ctx); err != nil {
+		return nil, err
+	}
+
 	fetchCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
