@@ -2,3 +2,6 @@
 .idea/
 coverage.out*
 lint.out
+# Binaries
+examples/identity-generator/identity-generator
+examples/client-giftwrap/giftwrap

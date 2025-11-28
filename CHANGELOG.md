@@ -1,5 +1,38 @@
 # CHANGELOG
 
+## [v0.1.0](https://github.com/niallyoung/goNDK/tree/v0.1.0) (2025-01-27)
+
+[Full Changelog](https://github.com/niallyoung/goNDK/compare/v0.0.9...v0.1.0)
+
+**Major Features:**
+- NIP-19 identity encoding/decoding (npub/nsec ↔ hex)
+- Identity generation and key management
+- NIP-44 encryption/decryption
+- NIP-59 gift wrap envelopes
+- Complete CLI tool for encrypted messaging
+- File transfer support with MIME detection
+- FetchEventByID helper for single event retrieval
+
+**Gift Wrap CLI:**
+- Send text messages and files
+- Receive and decrypt messages
+- Watch mode for real-time messaging
+- Automatic key generation and storage
+- Progress indicators and error handling
+- Comprehensive examples and documentation
+
+**New Packages:**
+- `identity/nip19.go` - Bech32 encoding/decoding
+- `identity/generate.go` - Key generation
+- `client/helpers.go` - Event fetching utilities
+- `examples/client-giftwrap/` - Complete CLI application
+
+**Test Coverage:**
+- All new features fully tested
+- Integration tests for CLI
+- MIME type detection tests
+- Key storage tests
+
 ## [v0.0.9](https://github.com/niallyoung/goNDK/tree/v0.0.9) (2025-01-27)
 
 [Full Changelog](https://github.com/niallyoung/goNDK/compare/v0.0.8...v0.0.9)
