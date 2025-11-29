@@ -1,0 +1,237 @@
+= Gift Wrap Structure in goNDK
+:toc:
+
+== Current Implementation (No GiftWrap Type)
+
+goNDK uses *raw Event-to-Event transformation* via functions:
+
+[source,go]
+----
+// Functions (not types)
+func Wrap(innerEvent *event.Event, senderPrivKey, recipientPubKey string) (*event.Event, error)
+func Unwrap(envelope *event.Event, recipientPrivKey, senderPubKey string) (*event.Event, error)
+----
+
+== Visual Structure
+
+=== Before Wrapping (Plain Event)
+
+[source]
+----
+┌─────────────────────────────────────┐
+│ Inner Event (kind 1, 20001, etc.)  │
+├─────────────────────────────────────┤
+│ id:        "abc123..."              │
+│ pubkey:    "sender_pubkey"          │
+│ created_at: 1234567890              │
+│ kind:      20001 (UserCreated)      │
+│ tags:      [["user", "123"]]        │
+│ content:   "{\"userId\":\"123\"}"   │  ← PLAINTEXT
+│ sig:       "def456..."              │
+└─────────────────────────────────────┘
+----
+
+=== After Wrapping (Gift Wrap Envelope)
+
+[source]
+----
+┌─────────────────────────────────────────────────────────────┐
+│ Envelope Event (kind 1059)                                  │
+├─────────────────────────────────────────────────────────────┤
+│ id:        "xyz789..."                                      │
+│ pubkey:    "sender_pubkey"                                  │
+│ created_at: 1234567891                                      │
+│ kind:      1059 (Gift Wrap)                                 │
+│ tags:      [["p", "recipient_pubkey"]]                      │
+│ content:   "v2.AgB7Ij...encrypted_base64..."  ← ENCRYPTED  │
+│ sig:       "ghi012..."                                      │
+└─────────────────────────────────────────────────────────────┘
+                           │
+                           │ NIP-44 Decrypt
+                           ↓
+┌─────────────────────────────────────┐
+│ Decrypted JSON String               │
+├─────────────────────────────────────┤
+│ {                                   │
+│   "id": "abc123...",                │
+│   "pubkey": "sender_pubkey",        │
+│   "created_at": 1234567890,         │
+│   "kind": 20001,                    │
+│   "tags": [["user", "123"]],        │
+│   "content": "{\"userId\":\"123\"}", │
+│   "sig": "def456..."                │
+│ }                                   │
+└─────────────────────────────────────┘
+                           │
+                           │ JSON Unmarshal
+                           ↓
+┌─────────────────────────────────────┐
+│ Inner Event (kind 20001)            │
+│ (same as original)                  │
+└─────────────────────────────────────┘
+----
+
+== Type Comparison
+
+=== Current: Function-Based (goNDK)
+
+[source,go]
+----
+// Input: Plain Event
+innerEvent := &event.Event{
+    Kind:    20001,
+    Content: `{"userId":"123"}`,
+    Tags:    event.Tags{{"user", "123"}},
+    // ... other fields
+}
+
+// Transform: Event → Event
+envelope, err := nip59.Wrap(innerEvent, senderPrivKey, recipientPubKey)
+
+// Output: Encrypted Event
+// envelope.Kind == 1059
+// envelope.Content == "v2.AgB7Ij..." (encrypted)
+// envelope.Tags == [["p", "recipient_pubkey"]]
+----
+
+=== Proposed: Type-Based (Future Enhancement)
+
+[source,go]
+----
+// Encapsulation with explicit type
+type GiftWrap struct {
+    Inner     *event.Event           // The payload
+    Envelope  *event.Event           // The wrapper (after Wrap())
+    Sender    *identity.ExtendedIdentity
+    Recipient string                 // pubkey hex
+}
+
+// Usage
+gw := &GiftWrap{
+    Inner:     innerEvent,
+    Sender:    senderIdentity,
+    Recipient: recipientPubKey,
+}
+
+envelope, err := gw.Wrap()  // Returns the encrypted envelope
+----
+
+== Key Differences
+
+[cols="1,2,2"]
+|===
+|Aspect |Current (Functions) |Proposed (Type)
+
+|Encapsulation
+|None - just Event → Event
+|GiftWrap type holds both inner + envelope
+
+|State
+|Stateless functions
+|Stateful object with sender/recipient
+
+|Clarity
+|Must track inner/envelope separately
+|Clear relationship: gw.Inner vs gw.Envelope
+
+|Reusability
+|Call Wrap() each time
+|Create once, wrap/unwrap multiple times
+
+|Type Safety
+|Both are *event.Event (ambiguous)
+|GiftWrap vs Event (explicit)
+|===
+
+== Current Flow in goNDK
+
+[source]
+----
+Plain Event
+    │
+    │ nip59.Wrap(event, senderPrivKey, recipientPubKey)
+    │   ├─ JSON Marshal inner event
+    │   ├─ NIP-44 Encrypt JSON → base64
+    │   ├─ Create new Event (kind 1059)
+    │   │   ├─ content = encrypted base64
+    │   │   ├─ tags = [["p", recipient]]
+    │   │   └─ pubkey = sender
+    │   └─ Sign envelope with sender's key
+    ↓
+Encrypted Event (kind 1059)
+    │
+    │ nip59.Unwrap(envelope, recipientPrivKey, senderPubKey)
+    │   ├─ NIP-44 Decrypt content → JSON string
+    │   └─ JSON Unmarshal → Event
+    ↓
+Plain Event (restored)
+----
+
+== What's Missing?
+
+=== 1. No Explicit GiftWrap Type
+Currently, both inner and envelope are `*event.Event`:
+
+[source,go]
+----
+// Ambiguous - which is which?
+var event1 *event.Event  // Inner or envelope?
+var event2 *event.Event  // Inner or envelope?
+
+// Must track manually
+innerEvent := createEvent()
+envelope := nip59.Wrap(innerEvent, ...)  // Both are *event.Event
+----
+
+=== 2. No State Preservation
+Can't easily access both inner and envelope together:
+
+[source,go]
+----
+// Current: Lose reference to inner after wrapping
+envelope := nip59.Wrap(innerEvent, ...)
+// innerEvent still exists, but no connection to envelope
+
+// Proposed: Keep both
+gw := &GiftWrap{Inner: innerEvent, ...}
+gw.Wrap()
+// gw.Inner and gw.Envelope both accessible
+----
+
+=== 3. No Identity Integration
+Must pass raw key strings:
+
+[source,go]
+----
+// Current: Manual key management
+envelope := nip59.Wrap(innerEvent, "abc123...", "def456...")
+
+// Proposed: Use Identity objects
+gw := &GiftWrap{
+    Inner:     innerEvent,
+    Sender:    senderIdentity,  // *identity.ExtendedIdentity
+    Recipient: recipientPubKey,
+}
+----
+
+== Recommendation
+
+*Keep current function-based API* (it works well) but *add optional GiftWrap type* for:
+
+1. Better encapsulation
+2. Clearer intent
+3. State preservation
+4. Identity integration
+
+Both patterns supported:
+
+[source,go]
+----
+// Pattern 1: Functions (simple, direct)
+envelope := nip59.Wrap(innerEvent, senderPrivKey, recipientPubKey)
+
+// Pattern 2: Type (explicit, stateful)
+gw := nip59.NewGiftWrap(innerEvent, senderIdentity, recipientPubKey)
+envelope := gw.Wrap()
+// Can access gw.Inner, gw.Envelope, gw.Sender later
+----

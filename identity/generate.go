@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/btcsuite/btcd/btcec/v2"
+	"github.com/btcsuite/btcd/btcec/v2/schnorr"
 )
 
 // ExtendedIdentity includes private key information
@@ -92,4 +93,28 @@ func FromHex(privKeyHex string) (*ExtendedIdentity, error) {
 		PubKeyHex:  pubKeyHex,
 		Nsec:       nsec,
 	}, nil
+}
+
+// Sign signs an event ID with this identity's private key
+// Returns hex-encoded Schnorr signature
+func (id *ExtendedIdentity) Sign(eventID string) (string, error) {
+	privKeyBytes, err := hex.DecodeString(id.PrivKeyHex)
+	if err != nil {
+		return "", fmt.Errorf("decode private key: %w", err)
+	}
+
+	privKey, _ := btcec.PrivKeyFromBytes(privKeyBytes)
+
+	idBytes, err := hex.DecodeString(eventID)
+	if err != nil {
+		return "", fmt.Errorf("decode event ID: %w", err)
+	}
+
+	// Create Schnorr signature
+	sig, err := schnorr.Sign(privKey, idBytes)
+	if err != nil {
+		return "", fmt.Errorf("schnorr sign: %w", err)
+	}
+
+	return hex.EncodeToString(sig.Serialize()), nil
 }

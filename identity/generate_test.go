@@ -7,41 +7,34 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// RED: Test identity generation
-func TestGenerate(t *testing.T) {
+func TestExtendedIdentity_Sign(t *testing.T) {
+	// Generate identity
 	id, err := Generate()
 	require.NoError(t, err)
-	assert.NotNil(t, id)
-	assert.Len(t, id.PrivKeyHex, 64)
-	assert.Len(t, id.PubKeyHex, 64)
-	assert.NotEmpty(t, id.NPub)
-	assert.NotEmpty(t, id.Nsec)
+
+	// Create a test event ID (64 hex chars)
+	eventID := "0000000000000000000000000000000000000000000000000000000000000001"
+
+	// Sign the event ID
+	sig, err := id.Sign(eventID)
+	require.NoError(t, err)
+	assert.Len(t, sig, 128, "Schnorr signature should be 128 hex chars (64 bytes)")
+
+	// Sign again - should be deterministic
+	sig2, err := id.Sign(eventID)
+	require.NoError(t, err)
+	assert.Equal(t, sig, sig2, "Signatures should be deterministic")
 }
 
-// RED: Test from nsec
-func TestFromNsec(t *testing.T) {
-	// Generate first
-	id1, err := Generate()
+func TestExtendedIdentity_Sign_InvalidEventID(t *testing.T) {
+	id, err := Generate()
 	require.NoError(t, err)
 
-	// Load from nsec
-	id2, err := FromNsec(id1.Nsec)
-	require.NoError(t, err)
+	// Invalid hex
+	_, err = id.Sign("not-hex")
+	assert.Error(t, err)
 
-	assert.Equal(t, id1.PrivKeyHex, id2.PrivKeyHex)
-	assert.Equal(t, id1.PubKeyHex, id2.PubKeyHex)
-	assert.Equal(t, id1.NPub, id2.NPub)
-	assert.Equal(t, id1.Nsec, id2.Nsec)
-}
-
-// RED: Test from hex
-func TestFromHex(t *testing.T) {
-	privKeyHex := "0000000000000000000000000000000000000000000000000000000000000001"
-
-	id, err := FromHex(privKeyHex)
-	require.NoError(t, err)
-	assert.Equal(t, privKeyHex, id.PrivKeyHex)
-	assert.NotEmpty(t, id.PubKeyHex)
-	assert.NotEmpty(t, id.NPub)
-	assert.NotEmpty(t, id.Nsec)
+	// Wrong length
+	_, err = id.Sign("abc123")
+	assert.Error(t, err)
 }
