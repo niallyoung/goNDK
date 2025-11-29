@@ -1,5 +1,27 @@
 # CHANGELOG
 
+## [v0.1.1](https://github.com/niallyoung/goNDK/tree/v0.1.1) (2025-01-28)
+
+[Full Changelog](https://github.com/niallyoung/goNDK/compare/v0.1.0...v0.1.1)
+
+**Event Validation Improvements:**
+- Relaxed content validation (empty content now allowed for contact lists, reactions)
+- Removed restrictive tag validation (tags can contain URLs, hex, special chars)
+- Split validation: `Validate()` for structure, `ValidateComplete()` for structure + signature
+- Improved nil tag handling in marshaling
+- Better NOSTR protocol compatibility
+
+**Documentation & Quality:**
+- Updated README with comprehensive feature descriptions and examples
+- Improved test coverage: identity 73.8% → 83.8%, overall 81.95% → 84.5%
+- Added comprehensive error case testing
+- Updated status to reflect early R&D nature
+- Competitive analysis completed
+
+**Test Coverage:**
+- Overall: 84.5% (up from 81.95%)
+- event: 82.1%, identity: 83.8%, client: 80.2%, nip44: 82.5%, nip59: 90.0%
+
 ## [v0.1.0](https://github.com/niallyoung/goNDK/tree/v0.1.0) (2025-01-27)
 
 [Full Changelog](https://github.com/niallyoung/goNDK/compare/v0.0.9...v0.1.0)

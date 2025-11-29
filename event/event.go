@@ -14,6 +14,7 @@ type Eventer interface {
 	Sign(privateKey string, signOpts ...schnorr.SignOption) error
 	String() string
 	Validate() error
+	ValidateComplete() error
 	ValidateSignature() (bool, error)
 }
 
@@ -47,20 +48,23 @@ func NewEvent(kind int, content string, tags Tags, createdAt *int64, id *string,
 }
 
 func (e Event) Validate() error {
-	if err := validation.ValidateStruct(&e,
+	return validation.ValidateStruct(&e,
 		validation.Field(&e.Kind, validation.Required),
-		validation.Field(&e.Content, validation.Required),
-		validation.Field(&e.Tags, validation.When(&e.Tags != nil, validation.Each(is.UTFLetterNumeric))),
-		validation.Field(&e.CreatedAt, validation.Required, validation.Min(0)),                            // time.Time.Unix()
-		validation.Field(&e.ID, validation.When(&e.ID != nil, is.Hexadecimal, validation.Length(64, 64))), // hex, sha256(event.Serialize())
-		validation.Field(&e.Pubkey, // hex, secp256k1 schnorr public key derived from Sign(privatekey, ...)
+		// Content can be empty for many event types (contact lists, reactions, etc.)
+		validation.Field(&e.CreatedAt, validation.Required, validation.Min(0)),
+		validation.Field(&e.ID, validation.When(&e.ID != nil, is.Hexadecimal, validation.Length(64, 64))),
+		validation.Field(&e.Pubkey,
 			validation.When(&e.Pubkey != nil, is.Hexadecimal, validation.Length(64, 64)),
 		),
-		validation.Field(
-			&e.Sig, // hex, pubkey signed serialization
+		validation.Field(&e.Sig,
 			validation.When(&e.Sig != nil, is.Hexadecimal, validation.Length(128, 128)),
 		),
-	); err != nil {
+	)
+}
+
+// ValidateComplete validates both structure and signature
+func (e Event) ValidateComplete() error {
+	if err := e.Validate(); err != nil {
 		return err
 	}
 

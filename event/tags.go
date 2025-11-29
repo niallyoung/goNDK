@@ -9,7 +9,12 @@ func (tags Tags) marshalTo(dst []byte) []byte {
 		if i > 0 {
 			dst = append(dst, ',')
 		}
-		dst = tag.marshalTo(dst)
+		// Handle nil tags gracefully
+		if tag == nil {
+			dst = append(dst, []byte("[]")...)
+		} else {
+			dst = tag.marshalTo(dst)
+		}
 	}
 	dst = append(dst, ']')
 	return dst

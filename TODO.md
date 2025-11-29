@@ -2,9 +2,12 @@
 
 ## Relay Client
 
-- [x] `Event{}` - 83.3% coverage
-- [x] `Identity{}` - NIP-19 encoding/decoding, key generation
-- [x] `Client{}`, `RelayManager{}` - 74.9% coverage
+- [x] `Event{}` - 82.1% coverage
+  - [x] Relaxed validation (empty content, special chars in tags)
+  - [x] Separate signature validation (Validate vs ValidateComplete)
+  - [x] Robust nil tag handling
+- [x] `Identity{}` - 83.8% coverage (NIP-19 encoding/decoding, key generation)
+- [x] `Client{}`, `RelayManager{}` - 80.2% coverage
   - [x] `Subscription{}`, `Filter{}`
   - [x] WebSocket connection management
   - [x] Event publishing

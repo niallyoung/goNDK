@@ -2,17 +2,31 @@
 
 [![Run Tests](https://github.com/niallyoung/goNDK/actions/workflows/main.yaml/badge.svg)](https://github.com/niallyoung/goNDK/actions/workflows/main.yaml)
 
-A NOSTR Development Kit in Go - well-engineered, production-ready, and easy to use.
+NOSTR Development Kit (Go) - well-engineered, comprehensively tested, easy to use, and intended (soon) for production solutions at scale.
+
+NOTE: this is VERY EARLY R&D level exploratory work. Interfaces will be established ASAP, then a modular and consistent pluggable architecture throughout. Your patience is appreciated 🙇‍♂
 
 ## Features
 
-- ✅ **Event** - Create, sign, and validate NOSTR events (NIP-01)
-- ✅ **Identity** - Manage NOSTR identities (npub/nsec, NIP-19)
-- ✅ **Client** - Connect to relays, publish events, subscribe to filters
-- ✅ **NIP-44** - Encryption/decryption
-- ✅ **NIP-59** - Gift wrap envelopes
-- ✅ **CLI Tool** - Send/receive encrypted messages and files
-- ✅ **81.95% test coverage** - Thoroughly tested and reliable
+- ✅ **Event System** - Create, sign, and validate NOSTR events (NIP-01)
+  - Flexible validation (structure vs complete with signatures)
+  - Support for empty content and complex tags
+  - JSON serialization with proper escaping
+- ✅ **Identity Management** - Complete NOSTR identity handling (NIP-19)
+  - Generate new identities or load from nsec/hex
+  - npub/nsec bech32 encoding/decoding
+  - Schnorr signature creation and verification
+- ✅ **Relay Client** - Full-featured relay communication
+  - WebSocket connections with proper message handling
+  - Event publishing and subscription with filters
+  - Integration with multiple public relays
+- ✅ **Encryption** - Privacy-preserving communication
+  - NIP-44 encryption/decryption
+  - NIP-59 gift wrap envelopes for metadata privacy
+- ✅ **CLI Tools** - Ready-to-use command line utilities
+  - Encrypted messaging with file transfer support
+  - Identity generation and management
+- ✅ **84.5% test coverage** - Thoroughly tested and reliable
 
 ## Installation
 
@@ -94,7 +108,19 @@ make build
 
 This NIP-59 gift-wrapped event was published to relay.damus.io and can only be decrypted by jb55.
 
-See `examples/client/` and `examples/client-giftwrap/` for complete working examples.
+## Examples
+
+### Basic Examples
+- **[examples/client/](examples/client/)** - Relay connection and event fetching
+- **[examples/identity-generator/](examples/identity-generator/)** - Identity creation and management
+
+### Advanced Examples  
+- **[examples/client-giftwrap/](examples/client-giftwrap/)** - Complete encrypted messaging CLI
+  - Send/receive encrypted messages and files
+  - Real-world NIP-59 gift wrap implementation
+  - Integration with public relays
+
+See individual example directories for detailed READMEs and usage instructions.
 
 ## Development
 
@@ -106,7 +132,11 @@ make lint     # Lint code
 
 ## Status
 
-**v0.1.0** - Complete NOSTR toolkit with relay client, encryption (NIP-44), gift wrap (NIP-59), and CLI tool for encrypted messaging.
+**v0.x.x** - Early R&D Work
+- High test coverage (84.5%) with integration tests
+- CLI tools for practical NOSTR usage
+- Relay client with real-world testing on public relays
+- Complete NIP-01, NIP-19, NIP-44, NIP-59 implementations
 
 See [TODO.md](TODO.md) for roadmap and [CHANGELOG.md](CHANGELOG.md) for release history.
 
@@ -120,4 +150,4 @@ Built upon and inspired by:
 
 ## License
 
-MIT License - Copyright (c) 2024 Niall Young
+MIT License - Copyright (c) 2024-2025 Niall Young

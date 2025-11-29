@@ -38,3 +38,42 @@ func TestExtendedIdentity_Sign_InvalidEventID(t *testing.T) {
 	_, err = id.Sign("abc123")
 	assert.Error(t, err)
 }
+
+func TestFromNsec(t *testing.T) {
+	// Generate identity first
+	original, err := Generate()
+	require.NoError(t, err)
+
+	// Load from nsec
+	loaded, err := FromNsec(original.Nsec)
+	require.NoError(t, err)
+
+	// Should match
+	assert.Equal(t, original.PrivKeyHex, loaded.PrivKeyHex)
+	assert.Equal(t, original.PubKeyHex, loaded.PubKeyHex)
+	assert.Equal(t, original.NPub, loaded.NPub)
+	assert.Equal(t, original.Nsec, loaded.Nsec)
+
+	// Test invalid nsec
+	_, err = FromNsec("invalid-nsec")
+	assert.Error(t, err)
+}
+
+func TestFromHex(t *testing.T) {
+	// Generate identity first
+	original, err := Generate()
+	require.NoError(t, err)
+
+	// Load from hex
+	loaded, err := FromHex(original.PrivKeyHex)
+	require.NoError(t, err)
+
+	// Should match
+	assert.Equal(t, original.PrivKeyHex, loaded.PrivKeyHex)
+	assert.Equal(t, original.PubKeyHex, loaded.PubKeyHex)
+	assert.Equal(t, original.NPub, loaded.NPub)
+
+	// Test invalid hex
+	_, err = FromHex("not-hex")
+	assert.Error(t, err)
+}

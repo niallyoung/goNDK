@@ -52,3 +52,5 @@ func TestNip19RoundTrip(t *testing.T) {
 
 	assert.Equal(t, originalHex, hex)
 }
+
+
