@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## [v0.1.2](https://github.com/niallyoung/goNDK/tree/v0.1.2) (2025-01-28)
+
+[Full Changelog](https://github.com/niallyoung/goNDK/compare/v0.1.1...v0.1.2)
+
+**Keygen CLI Tool:**
+- Production-ready NOSTR keypair generator
+- Multiple output formats: bech32 (default), hex, json
+- 100% test coverage with comprehensive test suite
+- Used in ERS service deployment automation
+- Zero external dependencies
+
 ## [v0.1.1](https://github.com/niallyoung/goNDK/tree/v0.1.1) (2025-01-28)
 
 [Full Changelog](https://github.com/niallyoung/goNDK/compare/v0.1.0...v0.1.1)

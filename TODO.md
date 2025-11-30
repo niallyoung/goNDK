@@ -35,6 +35,14 @@
 - [ ] NIP implementations
 - [ ] Advanced subscription patterns
 
+## Identity and Key Management
+Assuming a future NFC/QR hardware signer:
+- [ ] Isolate signing behind an Interface and centralised service
+- [ ] Key storage and retrieval mechanisms
+- [ ] Integration with secure enclaves or OS key stores
+- [ ] Key rotation and revocation R&D
+- [ ] Support for external signers (NFC, QR code, hardware wallets)
+
 # Examples
 
 ## Gift Wrap CLI
@@ -62,7 +70,6 @@
 - [ ] Usage examples and tutorials
 - [ ] NIP references and explanations
 - [ ] NOSTR protocol specification, artefacts, diagrams, visualisations
-
 
 ## Interfaces
 - [ ] Define clear interfaces for core components and layers of responsibility
